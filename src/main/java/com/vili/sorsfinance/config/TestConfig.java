@@ -11,16 +11,20 @@ import com.vili.sorsfinance.entities.Account;
 import com.vili.sorsfinance.entities.Address;
 import com.vili.sorsfinance.entities.BankAccount;
 import com.vili.sorsfinance.entities.Branch;
+import com.vili.sorsfinance.entities.Card;
 import com.vili.sorsfinance.entities.Category;
 import com.vili.sorsfinance.entities.City;
 import com.vili.sorsfinance.entities.Contact;
 import com.vili.sorsfinance.entities.Country;
+import com.vili.sorsfinance.entities.CreditCard;
 import com.vili.sorsfinance.entities.Email;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
 import com.vili.sorsfinance.entities.State;
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
+import com.vili.sorsfinance.entities.enums.CardStatus;
+import com.vili.sorsfinance.entities.enums.CardType;
 import com.vili.sorsfinance.entities.enums.CategoryType;
 import com.vili.sorsfinance.entities.enums.ContactType;
 import com.vili.sorsfinance.entities.enums.PeriodUnit;
@@ -30,6 +34,7 @@ import com.vili.sorsfinance.entities.enums.PhoneType;
 import com.vili.sorsfinance.repositories.AccountRepository;
 import com.vili.sorsfinance.repositories.AddressRepository;
 import com.vili.sorsfinance.repositories.BranchRepository;
+import com.vili.sorsfinance.repositories.CardRepository;
 import com.vili.sorsfinance.repositories.CategoryRepository;
 import com.vili.sorsfinance.repositories.CityRepository;
 import com.vili.sorsfinance.repositories.ContactRepository;
@@ -65,6 +70,8 @@ public class TestConfig implements CommandLineRunner {
 	private PersonRepository personRepository;
 	@Autowired
 	private AccountRepository accountRepository;
+	@Autowired
+	private CardRepository cardRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -130,11 +137,18 @@ public class TestConfig implements CommandLineRunner {
 		Account acc1 = new Account(null, "Carteira Pietro", p1, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
 		Account acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
 
+		Card cd1 = new Card(null, "Santander Universitário", acc2, "1536", null, CardType.MULTIPLE, CardStatus.UNBLOCKED);
+		Card cd2 = new CreditCard(null, "Crédito Santander", acc2, "0714", null, CardType.CREDIT, CardStatus.UNBLOCKED, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH);
+		
+		((BankAccount) acc2).addCard(cd1);
+		((BankAccount) acc2).addCard(cd2);
+		
 		p1.addAccount(acc1);
 		p1.addAccount(acc2);
 
 		personRepository.saveAll(Arrays.asList(p1, p2));
 		accountRepository.saveAll(Arrays.asList(acc1, acc2));
+		cardRepository.saveAll(Arrays.asList(cd1, cd2));
 		
 	}
 	

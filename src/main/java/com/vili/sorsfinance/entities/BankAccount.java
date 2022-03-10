@@ -1,8 +1,12 @@
 package com.vili.sorsfinance.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
@@ -24,6 +28,8 @@ public class BankAccount extends Account {
 	@ManyToOne
 	@JoinColumn(name = "bank_id")
 	private Person bank;
+	@OneToMany(mappedBy = "account")
+	private Set<Card> cards = new HashSet<>();
 
 	public BankAccount() {
 	}
@@ -105,5 +111,21 @@ public class BankAccount extends Account {
 
 	public void setCreditLimit(Double creditLimit) {
 		this.creditLimit = creditLimit;
+	}
+
+	public Person getBank() {
+		return bank;
+	}
+
+	public void setBank(Person bank) {
+		this.bank = bank;
+	}
+
+	public Set<Card> getCards() {
+		return cards;
+	}
+	
+	public void addCard(Card card) {
+		cards.add(card);
 	}
 }
