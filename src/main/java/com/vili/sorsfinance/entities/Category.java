@@ -17,12 +17,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vili.sorsfinance.entities.enums.CategoryType;
 
 @Entity
-public class Category implements Serializable{
-	
+public class Category implements Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private Integer tier;
@@ -32,9 +32,11 @@ public class Category implements Serializable{
 	private Category parent;
 	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
 	private Set<Category> children = new HashSet<>();
-	
+	@OneToMany(mappedBy = "category")
+	@JsonIgnore
+	private Set<Asset> assets = new HashSet<>();
+
 	public Category() {
-		
 	}
 
 	public Category(Long id, String name, Integer tier, CategoryType type) {
@@ -78,7 +80,7 @@ public class Category implements Serializable{
 			this.type = type.getCode();
 		}
 	}
-	
+
 	@JsonIgnore
 	public Category getParent() {
 		if (tier == 1) {
@@ -92,7 +94,7 @@ public class Category implements Serializable{
 			this.parent = parent;
 		}
 	}
-	
+
 	public Set<Category> getChildren() {
 		if (tier == 4) {
 			return null;
@@ -105,7 +107,17 @@ public class Category implements Serializable{
 			children.add(child);
 		}
 	}
-	
+
+	public Set<Asset> getAssets() {
+		return assets;
+	}
+
+	public void addAsset(Asset asset) {
+		if (tier < 4) {
+			assets.add(asset);
+		}
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

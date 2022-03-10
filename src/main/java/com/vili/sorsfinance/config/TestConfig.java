@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 
 import com.vili.sorsfinance.entities.Account;
 import com.vili.sorsfinance.entities.Address;
+import com.vili.sorsfinance.entities.Asset;
 import com.vili.sorsfinance.entities.BankAccount;
 import com.vili.sorsfinance.entities.Branch;
 import com.vili.sorsfinance.entities.Card;
@@ -20,9 +21,12 @@ import com.vili.sorsfinance.entities.CreditCard;
 import com.vili.sorsfinance.entities.Email;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
+import com.vili.sorsfinance.entities.Product;
+import com.vili.sorsfinance.entities.ServiceProvision;
 import com.vili.sorsfinance.entities.State;
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
+import com.vili.sorsfinance.entities.enums.AssetType;
 import com.vili.sorsfinance.entities.enums.CardStatus;
 import com.vili.sorsfinance.entities.enums.CardType;
 import com.vili.sorsfinance.entities.enums.CategoryType;
@@ -33,6 +37,7 @@ import com.vili.sorsfinance.entities.enums.PersonType;
 import com.vili.sorsfinance.entities.enums.PhoneType;
 import com.vili.sorsfinance.repositories.AccountRepository;
 import com.vili.sorsfinance.repositories.AddressRepository;
+import com.vili.sorsfinance.repositories.AssetRepository;
 import com.vili.sorsfinance.repositories.BranchRepository;
 import com.vili.sorsfinance.repositories.CardRepository;
 import com.vili.sorsfinance.repositories.CategoryRepository;
@@ -72,6 +77,8 @@ public class TestConfig implements CommandLineRunner {
 	private AccountRepository accountRepository;
 	@Autowired
 	private CardRepository cardRepository;
+	@Autowired
+	private AssetRepository assetRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -81,16 +88,25 @@ public class TestConfig implements CommandLineRunner {
 		Category cat3 = new Category(null, "Hospedagem", 3, CategoryType.TRANSACTION);
 		Category cat4 = new Category(null, "Educação", 1, CategoryType.TRANSACTION);
 		Category cat5 = new Category(null, "Curso", 2, CategoryType.TRANSACTION);
+		Category cat6 = new Category(null, "Eletrônicos", 1, CategoryType.ASSET);
+		Category cat7 = new Category(null, "Costura", 1, CategoryType.ASSET);
+		Category cat8 = new Category(null, "Massagem", 1, CategoryType.ASSET);
+		Category cat9 = new Category(null, "Alimentos", 1, CategoryType.ASSET);
+		Category cat10 = new Category(null, "Queijos", 2, CategoryType.ASSET);
+		Category cat11 = new Category(null, "Eletrodomésticos", 1, CategoryType.ASSET);
+
 		
 		cat1.addChild(cat2);
 		cat2.addChild(cat3);
 		cat4.addChild(cat5);
+		cat9.addChild(cat10);
 		
 		cat2.setParent(cat1);
 		cat3.setParent(cat2);
 		cat5.setParent(cat4);
+		cat10.setParent(cat9);
 		
-		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5));
+		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11));
 		
 		Country cnt1 = new Country(null, "Brasil", "BRA");
 		State st1 = new State(null, "São Paulo", "SP", cnt1);
@@ -150,6 +166,13 @@ public class TestConfig implements CommandLineRunner {
 		accountRepository.saveAll(Arrays.asList(acc1, acc2));
 		cardRepository.saveAll(Arrays.asList(cd1, cd2));
 		
+		Asset a1 = new Product(null, "Televisão", AssetType.PRODUCT, cat6, null, "Samsung");
+		Asset a2 = new ServiceProvision(null, "Conserto de calça jeans", AssetType.SERVICE_PROVISION, cat7, null);
+		Asset a3 = new Product(null, "Liquidificador", AssetType.PRODUCT, cat11, null, "Philco");
+		Asset a4 = new Product(null, "Queijo Brie", AssetType.PRODUCT, cat8, null, "Tirolez");
+		Asset a5 = new ServiceProvision(null, "Massagem modeladora", AssetType.SERVICE_PROVISION, cat9, null);
+
+		assetRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5));
 	}
 	
 	
