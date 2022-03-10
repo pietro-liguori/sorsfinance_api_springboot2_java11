@@ -7,7 +7,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.vili.sorsfinance.entities.Account;
 import com.vili.sorsfinance.entities.Address;
+import com.vili.sorsfinance.entities.BankAccount;
 import com.vili.sorsfinance.entities.Branch;
 import com.vili.sorsfinance.entities.Category;
 import com.vili.sorsfinance.entities.City;
@@ -17,11 +19,16 @@ import com.vili.sorsfinance.entities.Email;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
 import com.vili.sorsfinance.entities.State;
+import com.vili.sorsfinance.entities.Wallet;
+import com.vili.sorsfinance.entities.enums.AccountStatus;
+import com.vili.sorsfinance.entities.enums.AccountType;
 import com.vili.sorsfinance.entities.enums.CategoryType;
 import com.vili.sorsfinance.entities.enums.ContactType;
+import com.vili.sorsfinance.entities.enums.PeriodUnit;
 import com.vili.sorsfinance.entities.enums.PersonProfile;
 import com.vili.sorsfinance.entities.enums.PersonType;
 import com.vili.sorsfinance.entities.enums.PhoneType;
+import com.vili.sorsfinance.repositories.AccountRepository;
 import com.vili.sorsfinance.repositories.AddressRepository;
 import com.vili.sorsfinance.repositories.BranchRepository;
 import com.vili.sorsfinance.repositories.CategoryRepository;
@@ -57,6 +64,8 @@ public class TestConfig implements CommandLineRunner {
 	private BranchRepository branchRepository;
 	@Autowired
 	private PersonRepository personRepository;
+	@Autowired
+	private AccountRepository accountRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -91,23 +100,11 @@ public class TestConfig implements CommandLineRunner {
 		stateRepository.saveAll(Arrays.asList(st1, st2));
 		cityRepository.saveAll(Arrays.asList(cty1, cty2, cty3, cty4, cty5, cty6));
 		
-		Branch bch1 = new Branch(null, "Pessoa Física");
-		Branch bch2 = new Branch(null, "Restaurante");
-		Branch bch3 = new Branch(null, "Maquiagens");
-		Branch bch4 = new Branch(null, "Banco");
-		
-		branchRepository.saveAll(Arrays.asList(bch1, bch2, bch3, bch4));
-
-		Person p1 = new Person(null, "Pietro Magalhães Liguori", "36872371846", PersonType.NATURAL_PERSON, PersonProfile.HOLDER);
-				
 		Contact ctc1 = new Contact(null, ContactType.PHONE);
 		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13286-000", cty3, true);
 		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
 		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
 		
-		p1.setContact(ctc1);
-		p1.setBranch(bch1);
-
 		ctc1.addPhone(ph1);
 		ctc1.addAddress(adr1);
 		ctc1.addEmail(em1);
@@ -116,8 +113,28 @@ public class TestConfig implements CommandLineRunner {
 		emailRepository.saveAll(Arrays.asList(em1));
 		phoneRepository.saveAll(Arrays.asList(ph1));
 		contactRepository.saveAll(Arrays.asList(ctc1));
+
+		Branch bch1 = new Branch(null, "Pessoa Física");
+		Branch bch2 = new Branch(null, "Restaurante");
+		Branch bch3 = new Branch(null, "Maquiagens");
+		Branch bch4 = new Branch(null, "Banco");
 		
-		personRepository.saveAll(Arrays.asList(p1));
+		branchRepository.saveAll(Arrays.asList(bch1, bch2, bch3, bch4));
+				
+		Person p1 = new Person(null, "Pietro Magalhães Liguori", "36872371846", PersonType.NATURAL_PERSON, PersonProfile.HOLDER);
+		Person p2 = new Person(null, "Santander", null, PersonType.LEGAL_PERSON, PersonProfile.BANK);
+		
+		p1.setContact(ctc1);
+		p1.setBranch(bch1);
+		p2.setBranch(bch4);
+
+		personRepository.saveAll(Arrays.asList(p1, p2));
+		
+		Account acc1 = new Wallet(null, p1, "Carteira Pietro", 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
+		Account acc2 = new BankAccount(null, p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
+
+		
+		accountRepository.saveAll(Arrays.asList(acc1, acc2));
 	}
 	
 	

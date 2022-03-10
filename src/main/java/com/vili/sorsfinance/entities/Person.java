@@ -1,7 +1,9 @@
 package com.vili.sorsfinance.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.vili.sorsfinance.entities.enums.PersonProfile;
@@ -32,6 +35,8 @@ public class Person implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "branch_id")
 	private Branch branch;
+	@OneToMany(mappedBy="holder")
+	private Set<Account> accounts = new HashSet<>();
 
 	public Person() {
 		
