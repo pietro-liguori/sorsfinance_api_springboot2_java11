@@ -12,7 +12,7 @@ import com.vili.sorsfinance.entities.enums.PeriodUnit;
 public class BankAccount extends Account {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private String number;
 	private String agency;
 	private Double overdraft;
@@ -22,15 +22,16 @@ public class BankAccount extends Account {
 	private Integer gracePeriodUnit;
 	private Double creditLimit;
 	@ManyToOne
-	@JoinColumn(name="bank_id")
+	@JoinColumn(name = "bank_id")
 	private Person bank;
-	
+
 	public BankAccount() {
 	}
 
-	public BankAccount(Long id, Person holder, String number, String agency, Person bank, Double balance, Double overdraft, Double interest, PeriodUnit interestUnit,
-			Integer gracePeriod, PeriodUnit gracePeriodUnit, Double creditLimit, AccountType type, AccountStatus status) {
-		super(id, holder, balance, type, status);
+	public BankAccount(Long id, String name, Person holder, String number, String agency, Person bank, Double balance,
+			Double overdraft, Double interest, PeriodUnit interestUnit, Integer gracePeriod, PeriodUnit gracePeriodUnit,
+			Double creditLimit, AccountType type, AccountStatus status) {
+		super(id, name, holder, balance, type, status);
 		this.number = number;
 		this.agency = agency;
 		this.bank = bank;

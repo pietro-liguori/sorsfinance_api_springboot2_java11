@@ -19,7 +19,6 @@ import com.vili.sorsfinance.entities.Email;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
 import com.vili.sorsfinance.entities.State;
-import com.vili.sorsfinance.entities.Wallet;
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
 import com.vili.sorsfinance.entities.enums.CategoryType;
@@ -128,13 +127,15 @@ public class TestConfig implements CommandLineRunner {
 		p1.setBranch(bch1);
 		p2.setBranch(bch4);
 
-		personRepository.saveAll(Arrays.asList(p1, p2));
-		
-		Account acc1 = new Wallet(null, p1, "Carteira Pietro", 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
-		Account acc2 = new BankAccount(null, p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
+		Account acc1 = new Account(null, "Carteira Pietro", p1, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
+		Account acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
 
-		
+		p1.addAccount(acc1);
+		p1.addAccount(acc2);
+
+		personRepository.saveAll(Arrays.asList(p1, p2));
 		accountRepository.saveAll(Arrays.asList(acc1, acc2));
+		
 	}
 	
 	

@@ -107,6 +107,14 @@ public class Person implements Serializable{
 		this.branch = branch;
 	}
 
+	public Set<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void addAccount(Account account) {
+		accounts.add(account);
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

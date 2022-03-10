@@ -17,13 +17,14 @@ import com.vili.sorsfinance.entities.enums.AccountType;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public abstract class Account implements Serializable{
+public class Account implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
+	private String name;
 	private Double balance;
 	private Integer type;
 	private Integer status;
@@ -34,9 +35,11 @@ public abstract class Account implements Serializable{
 	public Account() {
 	}
 
-	public Account(Long id, Person holder, Double balance, AccountType type, AccountStatus status) {
+	public Account(Long id, String name, Person holder, Double balance, AccountType type, AccountStatus status) {
 		super();
 		this.id = id;
+		this.name = name;
+		this.holder = holder;
 		this.balance = balance;
 		this.type = type.getCode();
 		this.status = status.getCode();
@@ -48,6 +51,14 @@ public abstract class Account implements Serializable{
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Double getBalance() {
