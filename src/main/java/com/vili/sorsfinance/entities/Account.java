@@ -1,7 +1,9 @@
 package com.vili.sorsfinance.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +13,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
 
@@ -28,9 +32,13 @@ public class Account implements Serializable{
 	private Double balance;
 	private Integer type;
 	private Integer status;
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="holder_id")
 	private Person holder;
+	@JsonIgnore
+	@OneToMany(mappedBy = "account")
+	private Set<Payment> payments = new HashSet<>();
 	
 	public Account() {
 	}
@@ -83,6 +91,22 @@ public class Account implements Serializable{
 
 	public void setStatus(AccountStatus status) {
 		this.status = status.getCode();
+	}
+
+	public Person getHolder() {
+		return holder;
+	}
+
+	public void setHolder(Person holder) {
+		this.holder = holder;
+	}
+
+	public Set<Payment> getPayments() {
+		return payments;
+	}
+	
+	public void addPayment(Payment payment) {
+		payments.add(payment);
 	}
 
 	@Override

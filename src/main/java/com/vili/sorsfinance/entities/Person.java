@@ -14,16 +14,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vili.sorsfinance.entities.enums.PersonProfile;
 import com.vili.sorsfinance.entities.enums.PersonType;
 
 @Entity
-public class Person implements Serializable{
-	
+public class Person implements Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private String socialId;
@@ -35,11 +36,13 @@ public class Person implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "branch_id")
 	private Branch branch;
-	@OneToMany(mappedBy="holder")
+	@OneToMany(mappedBy = "holder")
 	private Set<Account> accounts = new HashSet<>();
+	@JsonIgnore
+	@OneToMany(mappedBy = "recipientOrPayer")
+	private Set<Transaction> transactions = new HashSet<>();
 
 	public Person() {
-		
 	}
 
 	public Person(Long id, String name, String socialId, PersonType type, PersonProfile profile) {
@@ -90,7 +93,7 @@ public class Person implements Serializable{
 	public void setProfile(PersonProfile profile) {
 		this.profile = profile.getCode();
 	}
-	
+
 	public Contact getContact() {
 		return contact;
 	}
@@ -107,6 +110,14 @@ public class Person implements Serializable{
 		this.branch = branch;
 	}
 
+	public Set<Transaction> getTransactions() {
+		return transactions;
+	}
+
+	public void addTransaction(Transaction transaction) {
+		transactions.add(transaction);
+	}
+
 	public Set<Account> getAccounts() {
 		return accounts;
 	}
@@ -114,7 +125,7 @@ public class Person implements Serializable{
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

@@ -19,11 +19,14 @@ import com.vili.sorsfinance.entities.Contact;
 import com.vili.sorsfinance.entities.Country;
 import com.vili.sorsfinance.entities.CreditCard;
 import com.vili.sorsfinance.entities.Email;
+import com.vili.sorsfinance.entities.Payment;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
 import com.vili.sorsfinance.entities.Product;
 import com.vili.sorsfinance.entities.ServiceProvision;
 import com.vili.sorsfinance.entities.State;
+import com.vili.sorsfinance.entities.Transaction;
+import com.vili.sorsfinance.entities.TransactionItem;
 import com.vili.sorsfinance.entities.enums.AccountStatus;
 import com.vili.sorsfinance.entities.enums.AccountType;
 import com.vili.sorsfinance.entities.enums.AssetType;
@@ -31,10 +34,13 @@ import com.vili.sorsfinance.entities.enums.CardStatus;
 import com.vili.sorsfinance.entities.enums.CardType;
 import com.vili.sorsfinance.entities.enums.CategoryType;
 import com.vili.sorsfinance.entities.enums.ContactType;
+import com.vili.sorsfinance.entities.enums.PaymentStatus;
+import com.vili.sorsfinance.entities.enums.PaymentType;
 import com.vili.sorsfinance.entities.enums.PeriodUnit;
 import com.vili.sorsfinance.entities.enums.PersonProfile;
 import com.vili.sorsfinance.entities.enums.PersonType;
 import com.vili.sorsfinance.entities.enums.PhoneType;
+import com.vili.sorsfinance.entities.enums.TransactionType;
 import com.vili.sorsfinance.repositories.AccountRepository;
 import com.vili.sorsfinance.repositories.AddressRepository;
 import com.vili.sorsfinance.repositories.AssetRepository;
@@ -45,9 +51,12 @@ import com.vili.sorsfinance.repositories.CityRepository;
 import com.vili.sorsfinance.repositories.ContactRepository;
 import com.vili.sorsfinance.repositories.CountryRepository;
 import com.vili.sorsfinance.repositories.EmailRepository;
+import com.vili.sorsfinance.repositories.PaymentRepository;
 import com.vili.sorsfinance.repositories.PersonRepository;
 import com.vili.sorsfinance.repositories.PhoneRepository;
 import com.vili.sorsfinance.repositories.StateRepository;
+import com.vili.sorsfinance.repositories.TransactionItemRepository;
+import com.vili.sorsfinance.repositories.TransactionRepository;
 
 @Configuration
 @Profile("test")
@@ -79,6 +88,12 @@ public class TestConfig implements CommandLineRunner {
 	private CardRepository cardRepository;
 	@Autowired
 	private AssetRepository assetRepository;
+	@Autowired
+	private TransactionRepository transactionRepository;
+	@Autowired
+	private TransactionItemRepository transactionItemRepository;
+	@Autowired
+	private PaymentRepository paymentRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -95,7 +110,6 @@ public class TestConfig implements CommandLineRunner {
 		Category cat10 = new Category(null, "Queijos", 2, CategoryType.ASSET);
 		Category cat11 = new Category(null, "Eletrodomésticos", 1, CategoryType.ASSET);
 
-		
 		cat1.addChild(cat2);
 		cat2.addChild(cat3);
 		cat4.addChild(cat5);
@@ -109,8 +123,10 @@ public class TestConfig implements CommandLineRunner {
 		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11));
 		
 		Country cnt1 = new Country(null, "Brasil", "BRA");
+		
 		State st1 = new State(null, "São Paulo", "SP", cnt1);
 		State st2 = new State(null, "Rio de Janeiro", "RJ", cnt1);
+		
 		City cty1 = new City(null, "São Paulo", st1);
 		City cty2 = new City(null, "Campinas", st1);
 		City cty3 = new City(null, "Vinhedo", st1);
@@ -137,18 +153,23 @@ public class TestConfig implements CommandLineRunner {
 		contactRepository.saveAll(Arrays.asList(ctc1));
 
 		Branch bch1 = new Branch(null, "Pessoa Física");
-		Branch bch2 = new Branch(null, "Restaurante");
-		Branch bch3 = new Branch(null, "Maquiagens");
+		Branch bch2 = new Branch(null, "Varejo de móveis e eletrodomésticos");
+		Branch bch3 = new Branch(null, "Costureira");
 		Branch bch4 = new Branch(null, "Banco");
 		
 		branchRepository.saveAll(Arrays.asList(bch1, bch2, bch3, bch4));
 				
 		Person p1 = new Person(null, "Pietro Magalhães Liguori", "36872371846", PersonType.NATURAL_PERSON, PersonProfile.HOLDER);
 		Person p2 = new Person(null, "Santander", null, PersonType.LEGAL_PERSON, PersonProfile.BANK);
-		
+		Person p3 = new Person(null, "Casas Bahia", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
+		Person p4 = new Person(null, "Casa da costura", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
+
 		p1.setContact(ctc1);
+		
 		p1.setBranch(bch1);
 		p2.setBranch(bch4);
+		p3.setBranch(bch2);
+		p4.setBranch(bch3);
 
 		Account acc1 = new Account(null, "Carteira Pietro", p1, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
 		Account acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
@@ -162,7 +183,7 @@ public class TestConfig implements CommandLineRunner {
 		p1.addAccount(acc1);
 		p1.addAccount(acc2);
 
-		personRepository.saveAll(Arrays.asList(p1, p2));
+		personRepository.saveAll(Arrays.asList(p1, p2, p3, p4));
 		accountRepository.saveAll(Arrays.asList(acc1, acc2));
 		cardRepository.saveAll(Arrays.asList(cd1, cd2));
 		
@@ -173,6 +194,30 @@ public class TestConfig implements CommandLineRunner {
 		Asset a5 = new ServiceProvision(null, "Massagem modeladora", AssetType.SERVICE_PROVISION, cat9, null);
 
 		assetRepository.saveAll(Arrays.asList(a1, a2, a3, a4, a5));
+
+		Transaction t1 = new Transaction(null, p3, new java.sql.Date(1524651548), "Compra Casas Bahia", 0.0, cat6, TransactionType.DEFAULT);
+		Transaction t2 = new Transaction(null, p4, new java.sql.Date(1524651548), "Costureira", 0.0, cat7, TransactionType.DEFAULT);
+		
+		transactionRepository.saveAll(Arrays.asList(t1, t2));
+
+		TransactionItem ti1 = new TransactionItem(t1, a1, 900.0, 1, 0.0);
+		TransactionItem ti2 = new TransactionItem(t1, a3, 200.0, 2, 0.0);
+		TransactionItem ti3 = new TransactionItem(t2, a2, 30.0, 3, 0.0);
+
+		t1.addItems(Arrays.asList(ti1, ti2));
+		t2.addItem(ti3);
+
+		transactionItemRepository.saveAll(Arrays.asList(ti1, ti2, ti3));
+		
+		Payment pay1 = new Payment(null, PaymentType.DEBIT, 1300.0, PaymentStatus.PAID, acc2, p1, t1, cd1);
+		Payment pay2 = new Payment(null, PaymentType.CASH, 50.0, PaymentStatus.PAID, acc1, p1, t2, null);
+		Payment pay3 = new Payment(null, PaymentType.DEBIT, 40.0, PaymentStatus.PAID, acc2, p1, t2, cd1);
+		
+		t1.addPayment(pay1);
+		t2.addPayment(pay2);
+		t2.addPayment(pay3);
+
+		paymentRepository.saveAll(Arrays.asList(pay1, pay2, pay3));
 	}
 	
 	

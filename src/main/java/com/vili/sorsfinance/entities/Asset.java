@@ -1,7 +1,11 @@
 package com.vili.sorsfinance.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +15,14 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vili.sorsfinance.entities.enums.AssetType;
 
 @Entity
-@Inheritance(strategy=InheritanceType.JOINED)
-public abstract class Asset implements Serializable{
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Asset implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,7 +34,10 @@ public abstract class Asset implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;
-	
+	@JsonIgnore
+	@OneToMany(mappedBy = "id.asset")
+	private Set<TransactionItem> items = new HashSet<>();
+
 	public Asset() {
 	}
 
@@ -70,6 +79,29 @@ public abstract class Asset implements Serializable{
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public Set<TransactionItem> getItems() {
+		return items;
+	}
+	
+	public void addItems(TransactionItem transactionItem) {
+		items.add(transactionItem);
+	}
+
+	public void addItems(List<TransactionItem> transactionItems) {
+		for (TransactionItem x : transactionItems ) {
+			items.add(x);
+		}
+	}
+
+	@JsonIgnore
+	public List<Transaction> getTransactions() {
+		List<Transaction> list = new ArrayList<>();
+		for (TransactionItem x : items) {
+			list.add(x.getTransaction());
+		}
+		return list;
 	}
 
 	@Override
