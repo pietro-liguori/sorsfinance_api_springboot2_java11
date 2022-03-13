@@ -30,6 +30,14 @@ public class TransactionResource {
 		return ResponseEntity.ok().body(list);
 	}
 
+	@GetMapping(value = "/category:{category}")
+	public ResponseEntity<List<Transaction>> findByCategory(@PathVariable String category) {
+		List<Transaction> list = service.findAll().stream()
+				.filter(tr -> tr.getCategory().getName().equals(category.toUpperCase()))
+				.toList();
+		return ResponseEntity.ok().body(list);
+	}
+
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Transaction> findById(@PathVariable Long id) {
 		Transaction obj = service.findById(id);

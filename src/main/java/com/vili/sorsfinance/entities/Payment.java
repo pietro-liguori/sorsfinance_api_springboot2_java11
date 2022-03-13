@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -15,6 +17,7 @@ import com.vili.sorsfinance.entities.enums.PaymentStatus;
 import com.vili.sorsfinance.entities.enums.PaymentType;
 
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Payment implements Serializable{
 
 	private static final long serialVersionUID = 1L;
@@ -22,9 +25,9 @@ public class Payment implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private PaymentType type;
+	private Integer type;
 	private Double value;
-	private PaymentStatus status;
+	private Integer status;
 	@ManyToOne
 	@JoinColumn(name = "account_id")
 	private Account account;
@@ -46,9 +49,9 @@ public class Payment implements Serializable{
 			Transaction transaction, Card card) {
 		super();
 		this.id = id;
-		this.type = type;
+		this.type = type.getCode();
 		this.value = value;
-		this.status = status;
+		this.status = status.getCode();
 		this.account = account;
 		this.responsible = responsible;
 		this.transaction = transaction;
@@ -64,11 +67,11 @@ public class Payment implements Serializable{
 	}
 
 	public PaymentType getType() {
-		return type;
+		return PaymentType.toEnum(type);
 	}
 
 	public void setType(PaymentType type) {
-		this.type = type;
+		this.type = type.getCode();
 	}
 
 	public Double getValue() {
@@ -80,11 +83,11 @@ public class Payment implements Serializable{
 	}
 
 	public PaymentStatus getStatus() {
-		return status;
+		return PaymentStatus.toEnum(status);
 	}
 
 	public void setStatus(PaymentStatus status) {
-		this.status = status;
+		this.status = status.getCode();
 	}
 
 	public Account getAccount() {
@@ -118,7 +121,7 @@ public class Payment implements Serializable{
 	public void setCard(Card card) {
 		this.card = card;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);

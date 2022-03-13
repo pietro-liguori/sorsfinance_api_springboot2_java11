@@ -1,6 +1,7 @@
 package com.vili.sorsfinance.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -18,8 +19,11 @@ import com.vili.sorsfinance.entities.City;
 import com.vili.sorsfinance.entities.Contact;
 import com.vili.sorsfinance.entities.Country;
 import com.vili.sorsfinance.entities.CreditCard;
+import com.vili.sorsfinance.entities.CreditCardStatement;
+import com.vili.sorsfinance.entities.CreditPayment;
 import com.vili.sorsfinance.entities.Email;
 import com.vili.sorsfinance.entities.Payment;
+import com.vili.sorsfinance.entities.PaymentInstallment;
 import com.vili.sorsfinance.entities.Person;
 import com.vili.sorsfinance.entities.Phone;
 import com.vili.sorsfinance.entities.Product;
@@ -50,7 +54,9 @@ import com.vili.sorsfinance.repositories.CategoryRepository;
 import com.vili.sorsfinance.repositories.CityRepository;
 import com.vili.sorsfinance.repositories.ContactRepository;
 import com.vili.sorsfinance.repositories.CountryRepository;
+import com.vili.sorsfinance.repositories.CreditCardStatementRepository;
 import com.vili.sorsfinance.repositories.EmailRepository;
+import com.vili.sorsfinance.repositories.PaymentInstallmentRepository;
 import com.vili.sorsfinance.repositories.PaymentRepository;
 import com.vili.sorsfinance.repositories.PersonRepository;
 import com.vili.sorsfinance.repositories.PhoneRepository;
@@ -94,6 +100,10 @@ public class TestConfig implements CommandLineRunner {
 	private TransactionItemRepository transactionItemRepository;
 	@Autowired
 	private PaymentRepository paymentRepository;
+	@Autowired
+	private CreditCardStatementRepository creditCardStatementRepository;
+	@Autowired
+	private PaymentInstallmentRepository paymentInstallmentRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -109,18 +119,22 @@ public class TestConfig implements CommandLineRunner {
 		Category cat9 = new Category(null, "Alimentos", 1, CategoryType.ASSET);
 		Category cat10 = new Category(null, "Queijos", 2, CategoryType.ASSET);
 		Category cat11 = new Category(null, "Eletrodomésticos", 1, CategoryType.ASSET);
+		Category cat12 = new Category(null, "Transporte", 1, CategoryType.TRANSACTION);
+
 
 		cat1.addChild(cat2);
+		cat1.addChild(cat12);
 		cat2.addChild(cat3);
 		cat4.addChild(cat5);
 		cat9.addChild(cat10);
 		
-		cat2.setParent(cat1);
+		cat12.setParent(cat1);
 		cat3.setParent(cat2);
 		cat5.setParent(cat4);
 		cat10.setParent(cat9);
+		cat2.setParent(cat1);
 		
-		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11));
+		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9, cat10, cat11, cat12));
 		
 		Country cnt1 = new Country(null, "Brasil", "BRA");
 		
@@ -139,7 +153,7 @@ public class TestConfig implements CommandLineRunner {
 		cityRepository.saveAll(Arrays.asList(cty1, cty2, cty3, cty4, cty5, cty6));
 		
 		Contact ctc1 = new Contact(null, ContactType.PHONE);
-		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13286-000", cty3, true);
+		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true);
 		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
 		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
 		
@@ -172,13 +186,13 @@ public class TestConfig implements CommandLineRunner {
 		p4.setBranch(bch3);
 
 		Account acc1 = new Account(null, "Carteira Pietro", p1, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
-		Account acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
+		BankAccount acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
 
 		Card cd1 = new Card(null, "Santander Universitário", acc2, "1536", null, CardType.MULTIPLE, CardStatus.UNBLOCKED);
-		Card cd2 = new CreditCard(null, "Crédito Santander", acc2, "0714", null, CardType.CREDIT, CardStatus.UNBLOCKED, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH);
+		CreditCard cd2 = new CreditCard(null, "Crédito Santander", acc2, "0714", null, CardType.CREDIT, CardStatus.UNBLOCKED, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH);
 		
-		((BankAccount) acc2).addCard(cd1);
-		((BankAccount) acc2).addCard(cd2);
+		acc2.addCard(cd1);
+		acc2.addCard(cd2);
 		
 		p1.addAccount(acc1);
 		p1.addAccount(acc2);
@@ -200,7 +214,7 @@ public class TestConfig implements CommandLineRunner {
 		
 		transactionRepository.saveAll(Arrays.asList(t1, t2));
 
-		TransactionItem ti1 = new TransactionItem(t1, a1, 900.0, 1, 0.0);
+		TransactionItem ti1 = new TransactionItem(t1, a1, 800.0, 1, 0.0);
 		TransactionItem ti2 = new TransactionItem(t1, a3, 200.0, 2, 0.0);
 		TransactionItem ti3 = new TransactionItem(t2, a2, 30.0, 3, 0.0);
 
@@ -209,15 +223,25 @@ public class TestConfig implements CommandLineRunner {
 
 		transactionItemRepository.saveAll(Arrays.asList(ti1, ti2, ti3));
 		
-		Payment pay1 = new Payment(null, PaymentType.DEBIT, 1300.0, PaymentStatus.PAID, acc2, p1, t1, cd1);
+		CreditPayment pay1 = new CreditPayment(null, PaymentType.CREDIT, 1200.0, PaymentStatus.PAID, acc2, p1, t1, cd1, 3);
 		Payment pay2 = new Payment(null, PaymentType.CASH, 50.0, PaymentStatus.PAID, acc1, p1, t2, null);
 		Payment pay3 = new Payment(null, PaymentType.DEBIT, 40.0, PaymentStatus.PAID, acc2, p1, t2, cd1);
+		
+		List<Double> iv1 = pay1.getInstallmentValues(null);
 		
 		t1.addPayment(pay1);
 		t2.addPayment(pay2);
 		t2.addPayment(pay3);
 
 		paymentRepository.saveAll(Arrays.asList(pay1, pay2, pay3));
+		
+		for (int i = 1; i <= pay1.getInstallments(); i++) {
+			CreditCardStatement st = new CreditCardStatement(null, cd2, "Fatura " + i, new java.sql.Date(1524651548), new java.sql.Date(1524651548), PaymentStatus.NOT_PAID);
+			PaymentInstallment pi = new PaymentInstallment(pay1, st, iv1.get(i - 1), i, PaymentStatus.NOT_PAID);
+			creditCardStatementRepository.save(st);
+			paymentInstallmentRepository.save(pi);
+		}
+		
 	}
 	
 	

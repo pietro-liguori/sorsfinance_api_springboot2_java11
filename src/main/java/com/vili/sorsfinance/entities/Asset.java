@@ -85,7 +85,7 @@ public abstract class Asset implements Serializable {
 		return items;
 	}
 	
-	public void addItems(TransactionItem transactionItem) {
+	public void addItem(TransactionItem transactionItem) {
 		items.add(transactionItem);
 	}
 

@@ -30,6 +30,14 @@ public class StateResource {
 		return ResponseEntity.ok().body(list);
 	}
 
+	@GetMapping(value = "/country:{country}")
+	public ResponseEntity<List<State>> findByState(@PathVariable Long country) {
+		List<State> list = service.findAll().stream()
+				.filter(state -> state.getCountry().getId().equals(country))
+				.toList();
+		return ResponseEntity.ok().body(list);
+	}
+
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<State> findById(@PathVariable Long id) {
 		State obj = service.findById(id);

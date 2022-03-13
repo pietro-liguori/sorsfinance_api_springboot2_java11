@@ -14,39 +14,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.vili.sorsfinance.entities.Category;
-import com.vili.sorsfinance.entities.enums.CategoryType;
-import com.vili.sorsfinance.services.CategoryService;
+import com.vili.sorsfinance.entities.CreditCardStatement;
+import com.vili.sorsfinance.services.CreditCardStatementService;
 
 @RestController
-@RequestMapping(value = "/categories")
-public class CategoryResource {
+@RequestMapping(value = "/accounts/creditcardstatements")
+public class CreditCardStatementResource {
 
 	@Autowired
-	private CategoryService service;
+	private CreditCardStatementService service;
 
 	@GetMapping
-	public ResponseEntity<List<Category>> findAll() {
-		List<Category> list = service.findAll();
-		return ResponseEntity.ok().body(list);
-	}
-
-	@GetMapping(value = "/type:{type}")
-	public ResponseEntity<List<Category>> findByType(@PathVariable Integer type) {
-		List<Category> list = service.findAll().stream()
-				.filter(cat -> cat.getType().equals(CategoryType.toEnum(type)) || cat.getType().equals(CategoryType.ALL))
-				.toList();
+	public ResponseEntity<List<CreditCardStatement>> findAll() {
+		List<CreditCardStatement> list = service.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Category> findById(@PathVariable Long id) {
-		Category obj = service.findById(id);
+	public ResponseEntity<CreditCardStatement> findById(@PathVariable Long id) {
+		CreditCardStatement obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 
 	@PostMapping
-	public ResponseEntity<Category> insert(@RequestBody Category obj) {
+	public ResponseEntity<CreditCardStatement> insert(@RequestBody CreditCardStatement obj) {
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);
@@ -59,7 +50,7 @@ public class CategoryResource {
 	}
 
 //	@PutMapping(value = "/{id}")
-//	public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody Category obj) {
+//	public ResponseEntity<CreditCardStatement> update(@PathVariable Long id, @RequestBody CreditCardStatement obj) {
 //		obj = service.update(id, obj);
 //		return ResponseEntity.ok().body(obj);
 //	}

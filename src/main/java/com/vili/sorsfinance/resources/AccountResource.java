@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vili.sorsfinance.entities.Account;
+import com.vili.sorsfinance.entities.Card;
+import com.vili.sorsfinance.entities.CreditCardStatement;
 import com.vili.sorsfinance.services.AccountService;
+import com.vili.sorsfinance.services.CardService;
+import com.vili.sorsfinance.services.CreditCardStatementService;
 
 @RestController
 @RequestMapping(value = "/accounts")
@@ -23,6 +27,10 @@ public class AccountResource {
 
 	@Autowired
 	private AccountService service;
+	@Autowired
+	private CreditCardStatementService creditCardStatementService;
+	@Autowired
+	private CardService cardService;
 
 	@GetMapping
 	public ResponseEntity<List<Account>> findAll() {
@@ -34,6 +42,23 @@ public class AccountResource {
 	public ResponseEntity<Account> findById(@PathVariable Long id) {
 		Account obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
+	}
+
+	@GetMapping(value = "/{id}/cards")
+	public ResponseEntity<List<Card>> findCards(@PathVariable Long id) {
+		service.findById(id);
+		List<Card> list = cardService.findAll().stream().filter(obj -> obj.getAccount().getId().equals(id)).toList();
+		if (list.size() > 0) return ResponseEntity.ok().body(list);
+		return ResponseEntity.notFound().build();
+	}
+
+	@GetMapping(value = "/{id}/creditcardstatements")
+	public ResponseEntity<List<CreditCardStatement>> findCreditCardStatements(@PathVariable Long id) {
+		service.findById(id);
+		List<CreditCardStatement> list = creditCardStatementService.findAll().stream()
+				.filter(obj -> obj.getCard().getAccount().getId().equals(id)).toList();
+		if (list.size() > 0) return ResponseEntity.ok().body(list);
+		return ResponseEntity.notFound().build();
 	}
 
 	@PostMapping

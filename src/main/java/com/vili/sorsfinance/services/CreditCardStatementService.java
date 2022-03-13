@@ -8,27 +8,27 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.vili.sorsfinance.entities.Account;
-import com.vili.sorsfinance.repositories.AccountRepository;
+import com.vili.sorsfinance.entities.CreditCardStatement;
+import com.vili.sorsfinance.repositories.CreditCardStatementRepository;
 import com.vili.sorsfinance.services.exceptions.DatabaseException;
 import com.vili.sorsfinance.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class AccountService {
+public class CreditCardStatementService {
 
 	@Autowired
-	AccountRepository repository;
+	CreditCardStatementRepository repository;
 
-	public List<Account> findAll() {
+	public List<CreditCardStatement> findAll() {
 		return repository.findAll();
 	}
 
-	public Account findById(Long id) {
-		Optional<Account> obj = repository.findById(id);
+	public CreditCardStatement findById(Long id) {
+		Optional<CreditCardStatement> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
-	
-	public Account insert(Account obj) {
+
+	public CreditCardStatement insert(CreditCardStatement obj) {
 		return repository.save(obj);
 	}
 
@@ -43,9 +43,9 @@ public class AccountService {
 		}
 	}
 
-//	public Account update(Long id, Account obj) {
+//	public CreditCardStatement update(Long id, CreditCardStatement obj) {
 //		try {
-//			Account entity = repository.getById(id);
+//			CreditCardStatement entity = repository.getById(id);
 //			updateData(entity, obj);
 //			return repository.save(entity);
 //		} catch (EntityNotFoundException e) {
@@ -53,7 +53,7 @@ public class AccountService {
 //		}
 //	}
 //
-//	private void updateData(Account entity, Account obj) {
+//	private void updateData(CreditCardStatement entity, CreditCardStatement obj) {
 //		entity.setName(obj.getName());
 //		entity.setEmail(obj.getEmail());
 //		entity.setPhone(obj.getPhone());

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vili.sorsfinance.entities.Person;
+import com.vili.sorsfinance.entities.enums.PersonProfile;
 import com.vili.sorsfinance.services.PersonService;
 
 @RestController
@@ -27,6 +28,14 @@ public class PersonResource {
 	@GetMapping
 	public ResponseEntity<List<Person>> findAll() {
 		List<Person> list = service.findAll();
+		return ResponseEntity.ok().body(list);
+	}
+
+	@GetMapping(value = "/type:{type}")
+	public ResponseEntity<List<Person>> findByProfile(@PathVariable Integer type) {
+		List<Person> list = service.findAll().stream()
+				.filter(person -> person.getProfile().equals(PersonProfile.toEnum(type)))
+				.toList();
 		return ResponseEntity.ok().body(list);
 	}
 

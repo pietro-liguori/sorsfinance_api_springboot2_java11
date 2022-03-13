@@ -18,7 +18,7 @@ import com.vili.sorsfinance.entities.Card;
 import com.vili.sorsfinance.services.CardService;
 
 @RestController
-@RequestMapping(value = "/cards")
+@RequestMapping(value = "/accounts/cards")
 public class CardResource {
 
 	@Autowired
