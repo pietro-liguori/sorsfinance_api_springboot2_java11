@@ -8,15 +8,15 @@ public enum CardStatus {
 	UNBLOCKED(2, "Desbloqueado"),
 	CANCELED(3, "Cancelado");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private CardStatus(int code, String label) {
+	private CardStatus(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -24,7 +24,7 @@ public enum CardStatus {
 		return label;
 	}
 	
-	public static CardStatus toEnum(int code) {
+	public static CardStatus toEnum(Integer code) {
 		for (CardStatus x : CardStatus.values()) {
 			if (x.getCode() == code) {
 				return x;

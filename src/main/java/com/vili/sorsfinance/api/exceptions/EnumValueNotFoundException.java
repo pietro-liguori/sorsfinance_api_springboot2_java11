@@ -11,5 +11,4 @@ public class EnumValueNotFoundException extends RuntimeException {
 	public EnumValueNotFoundException(String msg) {
 		super(msg);
 	}
-
 }

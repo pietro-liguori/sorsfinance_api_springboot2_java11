@@ -17,15 +17,15 @@ public enum PaymentType {
 	TED(11, "TED"),
 	PIX(12, "PIX");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private PaymentType(int code, String label) {
+	private PaymentType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -33,7 +33,7 @@ public enum PaymentType {
 		return label;
 	}
 	
-	public static PaymentType toEnum(int code) {
+	public static PaymentType toEnum(Integer code) {
 		for (PaymentType x : PaymentType.values()) {
 			if (x.getCode() == code) {
 				return x;

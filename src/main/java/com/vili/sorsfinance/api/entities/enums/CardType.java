@@ -13,15 +13,15 @@ public enum CardType {
 	TRANSPORT_TICKET(7, "Voucher"),
 	FUEL_TICKET(8, "Voucher");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private CardType(int code, String label) {
+	private CardType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -29,7 +29,7 @@ public enum CardType {
 		return label;
 	}
 	
-	public static CardType toEnum(int code) {
+	public static CardType toEnum(Integer code) {
 		for (CardType x : CardType.values()) {
 			if (x.getCode() == code) {
 				return x;

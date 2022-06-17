@@ -11,15 +11,15 @@ public enum PaymentStatus {
 	EXPIRED(5, "Vencido"),
 	CANCELED(6, "Cancelado");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private PaymentStatus(int code, String label) {
+	private PaymentStatus(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -27,7 +27,7 @@ public enum PaymentStatus {
 		return label;
 	}
 	
-	public static PaymentStatus toEnum(int code) {
+	public static PaymentStatus toEnum(Integer code) {
 		for (PaymentStatus x : PaymentStatus.values()) {
 			if (x.getCode() == code) {
 				return x;

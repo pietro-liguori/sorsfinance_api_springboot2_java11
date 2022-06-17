@@ -13,16 +13,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.vili.sorsfinance.api.entities.Account;
-import com.vili.sorsfinance.api.entities.BankAccount;
-import com.vili.sorsfinance.api.entities.Card;
-import com.vili.sorsfinance.api.entities.Person;
-import com.vili.sorsfinance.api.entities.TicketAccount;
-import com.vili.sorsfinance.api.entities.Wallet;
-import com.vili.sorsfinance.api.entities.dto.AccountDTO;
-import com.vili.sorsfinance.api.entities.enums.AccountStatus;
-import com.vili.sorsfinance.api.entities.enums.AccountType;
-import com.vili.sorsfinance.api.entities.enums.PeriodUnit;
 
 @Entity
 @Table(name = "entities")
@@ -112,64 +102,7 @@ public abstract class BusEntity implements Serializable {
 		return Objects.equals(id, other.id);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <T extends BusEntity> T fromDTO(DTO<T> dto) {
-		if (dto instanceof AccountDTO) {
-			AccountDTO obj = (AccountDTO) dto;
-			AccountType type = AccountType.toEnum(((AccountDTO) dto).getType());
-
-			if (Account.BANK_ACCOUNT_TYPES.contains(type)) {
-				BankAccount acc = new BankAccount(null, obj.getName(), null, obj.getNumber(), obj.getAgency(), null,
-						obj.getBalance(), obj.getOverdraft(), obj.getInterest(), PeriodUnit.toEnum(obj.getInterestUnit()),
-						obj.getGracePeriod(), PeriodUnit.toEnum(obj.getGracePeriodUnit()), obj.getCreditLimit(),
-						AccountType.toEnum(obj.getType()), AccountStatus.toEnum(obj.getStatus()));
-				Person holder = new Person(obj.getHolderId());
-				Person bank = new Person(obj.getBankId());
-				acc.setHolder(holder);
-				acc.setBank(bank);
-				
-				for (Long cardId : obj.getCards()) {
-					acc.addCard(new Card(cardId));
-				}
-				
-				acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				
-				return (T) acc;
-			}
-			
-			if (Account.TICKET_ACCOUNT_TYPES.contains(type)) {
-				TicketAccount acc = new TicketAccount(null, obj.getName(), null, null, obj.getBalance(),
-						AccountType.toEnum(obj.getType()), AccountStatus.toEnum(obj.getStatus()));
-				Person holder = new Person(obj.getHolderId());
-				Person bank = new Person(obj.getBankId());
-				acc.setHolder(holder);
-				acc.setBank(bank);
-
-				for (Long cardId : obj.getCards()) {
-					acc.addCard(new Card(cardId));
-				}
-
-				acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-
-				return (T) acc;
-			}
-			
-			if (Account.WALLET_TYPES.contains(type)) {
-				Wallet acc = new Wallet(null, obj.getName(), null, obj.getBalance(), obj.getSavings(), AccountType.toEnum(obj.getType()),
-						AccountStatus.toEnum(obj.getStatus()));
-				Person holder = new Person(obj.getHolderId());
-				acc.setHolder(holder);
-				acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-
-				return (T) acc;
-			}
-			
-			return null;
-		}
-		
 		return null;
 	}
 }

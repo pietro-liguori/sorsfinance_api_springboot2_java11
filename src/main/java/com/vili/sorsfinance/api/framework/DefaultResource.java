@@ -21,7 +21,7 @@ public class DefaultResource<T extends BusEntity, S extends DTO<T>> {
 	@Autowired 
 	HttpServletRequest request;
 	@Autowired 
-	DefaultService<T> service;
+	public DefaultService<T> service;
 
 	@GetMapping
 	public ResponseEntity<List<T>> findAll() {
@@ -43,7 +43,7 @@ public class DefaultResource<T extends BusEntity, S extends DTO<T>> {
 
 	@PostMapping
 	public ResponseEntity<T> insert(@RequestBody S dto) {
-		T obj = (T) T.fromDTO(dto);
+		T obj = T.fromDTO(dto);
 		obj = service.save(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);
@@ -57,7 +57,7 @@ public class DefaultResource<T extends BusEntity, S extends DTO<T>> {
 
 	@PutMapping
 	public ResponseEntity<T> update(@RequestBody S dto) {
-		T obj = (T) T.fromDTO(dto);
+		T obj = T.fromDTO(dto);
 		obj = service.save(obj);
 		return ResponseEntity.ok().body(obj);
 	}

@@ -8,15 +8,15 @@ public enum TransactionType {
 	WITHDRAW(2, "Saque em dinheiro"),
 	BETWEEN_HOLDERS(3, "Transferência entre titulares");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private TransactionType(int code, String label) {
+	private TransactionType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -24,7 +24,7 @@ public enum TransactionType {
 		return label;
 	}
 	
-	public static TransactionType toEnum(int code) {
+	public static TransactionType toEnum(Integer code) {
 		for (TransactionType x : TransactionType.values()) {
 			if (x.getCode() == code) {
 				return x;

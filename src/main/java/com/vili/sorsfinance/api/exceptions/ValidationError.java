@@ -4,8 +4,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vili.sorsfinance.api.framework.FieldMessage;
 
+@JsonIgnoreProperties(value = { "message" })
 public class ValidationError extends StandardError {
 	private static final long serialVersionUID = 1L;
 

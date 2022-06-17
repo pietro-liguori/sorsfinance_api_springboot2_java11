@@ -9,15 +9,15 @@ public enum PhoneType {
 	BUSINESS(3, "Comercial"),
 	OTHER(4, "Outro");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private PhoneType(int code, String label) {
+	private PhoneType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -25,7 +25,7 @@ public enum PhoneType {
 		return label;
 	}
 	
-	public static PhoneType toEnum(int code) {
+	public static PhoneType toEnum(Integer code) {
 		for (PhoneType x : PhoneType.values()) {
 			if (x.getCode() == code) {
 				return x;

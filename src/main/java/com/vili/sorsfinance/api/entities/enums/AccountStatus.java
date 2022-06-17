@@ -8,15 +8,15 @@ public enum AccountStatus {
 	CLOSED(2, "Fechada"),
 	BLOCKED(3, "Bloqueada");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private AccountStatus(int code, String label) {
+	private AccountStatus(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -24,7 +24,7 @@ public enum AccountStatus {
 		return label;
 	}
 	
-	public static AccountStatus toEnum(int code) {
+	public static AccountStatus toEnum(Integer code) {
 		for (AccountStatus x : AccountStatus.values()) {
 			if (x.getCode() == code) {
 				return x;

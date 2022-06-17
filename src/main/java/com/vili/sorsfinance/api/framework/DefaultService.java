@@ -52,16 +52,21 @@ public class DefaultService<T extends BusEntity> {
 	}
 
 	public T save(T entity) {
-		Optional<T> aux = repository.findById(entity.getId());
-		
-		if (aux.isPresent()) {
-			try {
-				entity.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				return repository.save(update(aux.get(), entity));
-			} catch (EntityNotFoundException | NoSuchElementException e) {
-				throw new ResourceNotFoundException(entity.getId());
+		try {
+			Optional<T> aux = repository.findById(entity.getId());
+			
+			if (aux.isPresent()) {
+				try {
+					entity.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+					return repository.save(update(aux.get(), entity));
+				} catch (EntityNotFoundException | NoSuchElementException e) {
+					throw new ResourceNotFoundException(entity.getId());
+				}
+			} else {
+				entity.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+				return repository.save(entity);
 			}
-		} else {
+		} catch (Exception e) {
 			entity.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
 			return repository.save(entity);
 		}

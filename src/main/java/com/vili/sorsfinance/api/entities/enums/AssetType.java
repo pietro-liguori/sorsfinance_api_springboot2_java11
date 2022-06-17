@@ -7,15 +7,15 @@ public enum AssetType {
 	SERVICE_PROVISION(1, "Prestação de serviço"),
 	PRODUCT(2, "Produto");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private AssetType(int code, String label) {
+	private AssetType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -23,7 +23,7 @@ public enum AssetType {
 		return label;
 	}
 	
-	public static AssetType toEnum(int code) {
+	public static AssetType toEnum(Integer code) {
 		for (AssetType x : AssetType.values()) {
 			if (x.getCode() == code) {
 				return x;

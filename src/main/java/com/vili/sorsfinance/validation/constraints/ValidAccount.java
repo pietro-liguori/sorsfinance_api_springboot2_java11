@@ -1,4 +1,4 @@
-package com.vili.sorsfinance.validation;
+package com.vili.sorsfinance.validation.constraints;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,11 +8,13 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import com.vili.sorsfinance.validation.AccountValidator;
+
 @Constraint(validatedBy = AccountValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AccountSave {
-	String message() default "Erro de validação";
+public @interface ValidAccount {
+	String message() default "Account validation error";
 
 	Class<?>[] groups() default {};
 

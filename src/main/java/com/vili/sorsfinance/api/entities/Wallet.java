@@ -1,7 +1,10 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 
+import com.vili.sorsfinance.api.entities.dto.AccountDTO;
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
 
@@ -30,14 +33,14 @@ public class Wallet extends Account {
 		this.savings = savings;
 	}
 
-//	public static Wallet fromDTO(AccountDTO dto) {
-//		Wallet acc = new Wallet(null, dto.getName(), null, dto.getBalance(), dto.getSavings(), AccountType.toEnum(dto.getType()),
-//				AccountStatus.toEnum(dto.getStatus()));
-//		Person holder = new Person(dto.getHolderId());
-//		acc.setHolder(holder);
-//		acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-//		acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-//
-//		return acc;
-//	}
+	public static Wallet fromDTO(AccountDTO dto) {
+		Wallet acc = new Wallet(null, dto.getName(), null, dto.getBalance(), dto.getSavings(),
+				AccountType.toEnum(dto.getType()), AccountStatus.toEnum(dto.getStatus()));
+		Person holder = new Person(dto.getHolderId());
+		acc.setHolder(holder);
+		acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+
+		return acc;
+	}
 }

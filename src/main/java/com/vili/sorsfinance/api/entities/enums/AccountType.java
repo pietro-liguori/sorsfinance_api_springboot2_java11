@@ -10,15 +10,15 @@ public enum AccountType {
 	SALARY_ACCOUNT(4, "Conta salário"),
 	TICKET_ACCOUNT(5, "Ticket");
 
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private AccountType(int code, String label) {
+	private AccountType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -26,7 +26,8 @@ public enum AccountType {
 		return label;
 	}
 	
-	public static AccountType toEnum(int code) {
+	public static AccountType toEnum(Integer code) {
+
 		for (AccountType x : AccountType.values()) {
 			if (x.getCode() == code) {
 				return x;
@@ -37,6 +38,7 @@ public enum AccountType {
 	}
 	
 	public static AccountType toEnum(String label) {
+
 		for (AccountType x : AccountType.values()) {
 			if (x.getLabel() == label) {
 				return x;

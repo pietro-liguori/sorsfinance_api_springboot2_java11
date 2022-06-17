@@ -13,15 +13,22 @@ public enum PeriodUnit {
 	SEMESTER(7, "Semestre"),
 	YEAR(8, "Ano");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private PeriodUnit(int code, String label) {
+	private PeriodUnit(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
-	
-	public int getCode() {
+
+	private PeriodUnit(Integer code) {
+		this.code = code;
+	}
+
+	private PeriodUnit() {
+	}
+
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -29,7 +36,7 @@ public enum PeriodUnit {
 		return label;
 	}
 	
-	public static PeriodUnit toEnum(int code) {
+	public static PeriodUnit toEnum(Integer code) {
 		for (PeriodUnit x : PeriodUnit.values()) {
 			if (x.getCode() == code) {
 				return x;

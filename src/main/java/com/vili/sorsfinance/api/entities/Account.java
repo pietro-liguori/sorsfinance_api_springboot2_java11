@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
@@ -30,13 +31,18 @@ public class Account extends BusEntity {
 	public static final List<AccountType> TICKET_ACCOUNT_TYPES = Arrays.asList(AccountType.TICKET_ACCOUNT);
 	public static final List<AccountType> WALLET_TYPES = Arrays.asList(AccountType.WALLET);
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String name;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Double balance;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer type;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer status;
 	@ManyToOne
 	@JoinColumn(name="holder_id")
 	@JsonIgnoreProperties({ "account", "contact" })
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Person holder;
 	@JsonIgnore
 	@OneToMany(mappedBy = "account")
@@ -76,6 +82,9 @@ public class Account extends BusEntity {
 	}
 
 	public String getType() {
+		if (type == null)
+			return null;
+		
 		return AccountType.toEnum(type).getLabel();
 	}
 
@@ -84,6 +93,9 @@ public class Account extends BusEntity {
 	}
 
 	public String getStatus() {
+		if (status == null)
+			return null;
+		
 		return AccountStatus.toEnum(status).getLabel();
 	}
 

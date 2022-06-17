@@ -8,15 +8,15 @@ public enum ContactType {
 	EMAIL(2, "E-mail"),
 	PHONE(3, "Telefone");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private ContactType(int code, String label) {
+	private ContactType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -24,7 +24,7 @@ public enum ContactType {
 		return label;
 	}
 	
-	public static ContactType toEnum(int code) {
+	public static ContactType toEnum(Integer code) {
 		for (ContactType x : ContactType.values()) {
 			if (x.getCode() == code) {
 				return x;

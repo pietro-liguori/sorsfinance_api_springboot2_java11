@@ -19,25 +19,15 @@ import com.vili.sorsfinance.api.entities.Wallet;
 import com.vili.sorsfinance.api.entities.dto.AccountDTO;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
 import com.vili.sorsfinance.api.entities.filters.AccountFilter;
-import com.vili.sorsfinance.api.framework.BusEntity;
 import com.vili.sorsfinance.api.framework.DefaultResource;
 import com.vili.sorsfinance.api.framework.EntityFilter;
 import com.vili.sorsfinance.api.framework.Request;
 import com.vili.sorsfinance.api.repositories.AccountRepository;
-import com.vili.sorsfinance.api.services.BankAccountService;
-import com.vili.sorsfinance.api.services.TicketAccountService;
-import com.vili.sorsfinance.api.services.WalletService;
 
 @RestController
 @RequestMapping(value = "/accounts")
 public class AccountResource extends DefaultResource<Account, AccountDTO> {
 
-	@Autowired
-	BankAccountService bankAccountService;
-	@Autowired
-	TicketAccountService ticketService;
-	@Autowired
-	WalletService walletService;
 	@Autowired
 	AccountRepository repo;
 
@@ -50,17 +40,18 @@ public class AccountResource extends DefaultResource<Account, AccountDTO> {
 	@Override
 	@PostMapping
 	public ResponseEntity<Account> insert(@Valid @RequestBody AccountDTO dto) {
-		AccountType type = AccountType.toEnum(dto.getType());
+		AccountDTO accDto = (AccountDTO) dto;  
+		AccountType type = AccountType.toEnum(accDto.getType());
 		Account obj = null;
 
 		if (Account.BANK_ACCOUNT_TYPES.contains(type))
-			obj = bankAccountService.save((BankAccount) BusEntity.fromDTO(dto));
+			obj = service.save(BankAccount.fromDTO(accDto));
 
 		if (Account.TICKET_ACCOUNT_TYPES.contains(type))
-			obj = ticketService.save((TicketAccount) BusEntity.fromDTO(dto));
+			obj = service.save(TicketAccount.fromDTO(accDto));
 
 		if (Account.WALLET_TYPES.contains(type))
-			obj = walletService.save((Wallet) BusEntity.fromDTO(dto));
+			obj = service.save(Wallet.fromDTO(accDto));
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);

@@ -8,15 +8,15 @@ public enum PersonProfile {
 	HOLDER(2, "Titular"),
 	BANK(3, "Banco");
 	
-	private int code;
+	private Integer code;
 	private String label;
 	
-	private PersonProfile(int code, String label) {
+	private PersonProfile(Integer code, String label) {
 		this.code = code;
 		this.label = label;
 	}
 	
-	public int getCode() {
+	public Integer getCode() {
 		return code;
 	}
 	
@@ -24,7 +24,7 @@ public enum PersonProfile {
 		return label;
 	}
 	
-	public static PersonProfile toEnum(int code) {
+	public static PersonProfile toEnum(Integer code) {
 		for (PersonProfile x : PersonProfile.values()) {
 			if (x.getCode() == code) {
 				return x;

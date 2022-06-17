@@ -23,10 +23,13 @@ public class Person extends BusEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String name;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String socialId;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer type;
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer profile;
 	@OneToOne
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,6 +38,7 @@ public class Person extends BusEntity {
 	private Contact contact;
 	@ManyToOne
 	@JoinColumn(name = "branch_id")
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Branch branch;
 	@JsonIgnore
 	@OneToMany(mappedBy = "holder")
@@ -76,6 +80,9 @@ public class Person extends BusEntity {
 	}
 
 	public String getType() {
+		if (type == null)
+			return null;
+		
 		return PersonType.toEnum(type).getLabel();
 	}
 
@@ -84,6 +91,9 @@ public class Person extends BusEntity {
 	}
 
 	public String getProfile() {
+		if (profile == null)
+			return null;
+		
 		return PersonProfile.toEnum(profile).getLabel();
 	}
 
