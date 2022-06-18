@@ -10,23 +10,18 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 
-import com.vili.sorsfinance.api.entities.enums.PersonProfile;
-import com.vili.sorsfinance.validation.PersonIdValidator;
+import com.vili.sorsfinance.validation.CityIdValidator;
 
 @Documented
 @NotNull(message = "Must not be null")
-@Constraint(validatedBy = PersonIdValidator.class)
+@Constraint(validatedBy = CityIdValidator.class)
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidPersonId {
+public @interface ValidCityId {
 
-	String message() default "Person id validation error";
+	String message() default "City id validation error";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-    
-    PersonProfile profile() default PersonProfile.STANDARD;
-    
-    boolean acceptAll() default false;
 }

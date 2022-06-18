@@ -90,18 +90,20 @@ public class TestConfig implements CommandLineRunner {
 		repository.saveAll(Arrays.asList(st1, st2));
 		repository.saveAll(Arrays.asList(cty1, cty2, cty3, cty4, cty5, cty6));
 		
-		Contact ctc1 = new Contact(null, ContactType.PHONE);
 		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true);
-		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true, null);
-		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true, null);
-		
+		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
+		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
+	
+		repository.saveAll(Arrays.asList(adr1));
+		repository.saveAll(Arrays.asList(em1));
+		repository.saveAll(Arrays.asList(ph1));
+
+		Contact ctc1 = new Contact(null, ContactType.PHONE);
+
 		ctc1.addPhone(ph1);
 		ctc1.addAddress(adr1);
 		ctc1.addEmail(em1);
 		
-		repository.saveAll(Arrays.asList(adr1));
-		repository.saveAll(Arrays.asList(em1));
-		repository.saveAll(Arrays.asList(ph1));
 		repository.saveAll(Arrays.asList(ctc1));
 
 		Branch bch1 = new Branch(null, "Pessoa Física");

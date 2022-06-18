@@ -5,6 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
@@ -14,10 +15,12 @@ public class City extends BusEntity {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String name;
 	@ManyToOne
 	@JoinColumn(name = "state_id")
 	@JsonIgnoreProperties({ "cities" })
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private State state;
 	
 	public City() {
@@ -28,6 +31,10 @@ public class City extends BusEntity {
 		super(id, City.class);
 		this.name = name;
 		this.state = state;
+	}
+
+	public City(Long id) {
+		super(id, City.class);
 	}
 
 	public String getName() {

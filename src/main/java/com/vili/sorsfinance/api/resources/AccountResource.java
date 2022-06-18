@@ -40,18 +40,17 @@ public class AccountResource extends DefaultResource<Account, AccountDTO> {
 	@Override
 	@PostMapping
 	public ResponseEntity<Account> insert(@Valid @RequestBody AccountDTO dto) {
-		AccountDTO accDto = (AccountDTO) dto;  
-		AccountType type = AccountType.toEnum(accDto.getType());
+		AccountType type = AccountType.toEnum(dto.getType());
 		Account obj = null;
 
 		if (Account.BANK_ACCOUNT_TYPES.contains(type))
-			obj = service.save(BankAccount.fromDTO(accDto));
+			obj = service.save(BankAccount.fromDTO(dto));
 
 		if (Account.TICKET_ACCOUNT_TYPES.contains(type))
-			obj = service.save(TicketAccount.fromDTO(accDto));
+			obj = service.save(TicketAccount.fromDTO(dto));
 
 		if (Account.WALLET_TYPES.contains(type))
-			obj = service.save(Wallet.fromDTO(accDto));
+			obj = service.save(Wallet.fromDTO(dto));
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);

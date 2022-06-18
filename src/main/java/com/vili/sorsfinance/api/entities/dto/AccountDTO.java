@@ -1,8 +1,8 @@
 package com.vili.sorsfinance.api.entities.dto;
 
-import java.util.List;
+import java.util.Set;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
@@ -18,7 +18,7 @@ public class AccountDTO extends DTO<Account> {
 
 	@ValidPersonId(profile = PersonProfile.HOLDER)
 	private Long holderId;
-	@NotEmpty(message = "Must not be empty")
+	@NotBlank(message = "Must not be null or empty")
 	@Length(min = 5, max = 60, message = "Must be between 5 and 60 characters")
 	private String name;
 	@NotNull(message = "Must not be null")
@@ -28,7 +28,7 @@ public class AccountDTO extends DTO<Account> {
 	@NotNull(message = "Must not be null")
 	private Integer status;
 	private Long bankId;
-	private List<Long> cardIds;
+	private Set<Long> cardIds;
 	private String number;
 	private String agency;
 	private Double overdraft;
@@ -91,11 +91,11 @@ public class AccountDTO extends DTO<Account> {
 		this.bankId = bankId;
 	}
 
-	public List<Long> getCardIds() {
+	public Set<Long> getCardIds() {
 		return cardIds;
 	}
 
-	public void setCardIds(List<Long> cards) {
+	public void setCardIds(Set<Long> cards) {
 		this.cardIds = cards;
 	}
 

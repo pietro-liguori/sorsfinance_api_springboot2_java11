@@ -15,6 +15,7 @@ import com.vili.sorsfinance.api.entities.dto.AccountDTO;
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
 import com.vili.sorsfinance.api.entities.enums.PeriodUnit;
+import com.vili.sorsfinance.api.framework.DTOType;
 
 @Entity
 public class BankAccount extends Account {
@@ -159,20 +160,20 @@ public class BankAccount extends Account {
 	}
 
 	public static BankAccount fromDTO(AccountDTO dto) {
-		BankAccount acc = new BankAccount(null, dto.getName(), null, dto.getNumber(), dto.getAgency(), null,
+		Person holder = new Person(dto.getHolderId());
+		Person bank = new Person(dto.getBankId());
+		BankAccount acc = new BankAccount(dto.getId(), dto.getName(), holder, dto.getNumber(), dto.getAgency(), bank,
 				dto.getBalance(), dto.getOverdraft(), dto.getInterest(), PeriodUnit.toEnum(dto.getInterestUnit()),
 				dto.getGracePeriod(), PeriodUnit.toEnum(dto.getGracePeriodUnit()), dto.getCreditLimit(),
 				AccountType.toEnum(dto.getType()), AccountStatus.toEnum(dto.getStatus()));
-		Person holder = new Person(dto.getHolderId());
-		Person bank = new Person(dto.getBankId());
-		acc.setHolder(holder);
-		acc.setBank(bank);
 		
 		for (Long cardId : dto.getCardIds()) {
 			acc.addCard(new Card(cardId));
 		}
 		
-		acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		if (dto.getMethod().equals(DTOType.INSERT))
+			acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		
 		acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
 		
 		return acc;

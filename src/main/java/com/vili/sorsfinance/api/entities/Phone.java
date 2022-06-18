@@ -1,10 +1,13 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.PhoneDTO;
 import com.vili.sorsfinance.api.entities.enums.PhoneType;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
@@ -25,12 +28,15 @@ public class Phone extends BusEntity {
 		super();
 	}
 
-	public Phone(Long id, String number, PhoneType type, Boolean preferred, Contact contact) {
+	public Phone(Long id) {
+		super(id, Phone.class);
+	}
+
+	public Phone(Long id, String number, PhoneType type, Boolean preferred) {
 		super(id, Phone.class);
 		this.number = number;
 		this.type = type.getCode();
 		this.preferred = preferred;
-		this.contact = contact;
 	}
 
 	public String getNumber() {
@@ -63,5 +69,13 @@ public class Phone extends BusEntity {
 
 	public void setContact(Contact contact) {
 		this.contact = contact;
+	}
+	
+	public static Phone fromDTO(PhoneDTO dto) {
+		Phone phone = new Phone(dto.getId(), dto.getNumber(),PhoneType.toEnum(dto.getType()), dto.getPreferred());
+		Contact contact = new Contact(dto.getContactId());
+		phone.setContact(contact);
+		phone.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		return phone;
 	}
 }

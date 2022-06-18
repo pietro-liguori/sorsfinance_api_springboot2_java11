@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import com.vili.sorsfinance.api.exceptions.DatabaseException;
 import com.vili.sorsfinance.api.exceptions.EnumValueNotFoundException;
 import com.vili.sorsfinance.api.exceptions.InvalidRequestParamException;
+import com.vili.sorsfinance.api.exceptions.NoSuchEntityException;
 import com.vili.sorsfinance.api.exceptions.NoSuchPathException;
 import com.vili.sorsfinance.api.exceptions.ResourceNotFoundException;
 import com.vili.sorsfinance.api.exceptions.StandardError;
@@ -31,7 +33,16 @@ public class DefaultExceptionHandler {
 		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
-	
+
+	@ExceptionHandler(NoSuchEntityException.class)
+	public ResponseEntity<StandardError>enumValueNotFound(NoSuchEntityException e, HttpServletRequest request) {
+		e.printStackTrace();
+		String name = "Entity not found";
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<StandardError> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 		String name = "Resource not found";
@@ -86,5 +97,17 @@ public class DefaultExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 	
-	// TODO HttpMessageNotReadableException
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<StandardError> validation(HttpMessageNotReadableException e, HttpServletRequest request) {
+		String name = "Deserialization error";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		ValidationError err = new ValidationError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		String errorMsg = e.getMessage();
+		String simpleMsg = errorMsg.split(";")[0];
+		int fieldNameStart = errorMsg.indexOf("DTO[") + 5;
+		int fieldNameEnd = errorMsg.indexOf("\"]", fieldNameStart);
+		String field = errorMsg.substring(fieldNameStart, fieldNameEnd);
+		err.add(field, simpleMsg);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
 }

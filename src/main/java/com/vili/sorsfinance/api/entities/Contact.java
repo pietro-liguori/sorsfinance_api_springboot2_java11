@@ -40,10 +40,15 @@ public class Contact extends BusEntity {
 	private Set<Phone> phones = new HashSet<>();
 	@OneToOne(mappedBy = "contact")
 	@JsonIgnoreProperties({ "contact" })
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Person owner;
 
 	public Contact() {
 		super();
+	}
+	
+	public Contact(Long id) {
+		super(id, Contact.class);
 	}
 
 	public Contact(Long id, ContactType preferredContact) {

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.vili.sorsfinance.api.entities.dto.AccountDTO;
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
+import com.vili.sorsfinance.api.framework.DTOType;
 
 @Entity
 public class TicketAccount extends Account {
@@ -62,18 +63,18 @@ public class TicketAccount extends Account {
 	}
 
 	public static TicketAccount fromDTO(AccountDTO dto) {
-		TicketAccount acc = new TicketAccount(null, dto.getName(), null, null, dto.getBalance(),
-				AccountType.toEnum(dto.getType()), AccountStatus.toEnum(dto.getStatus()));
 		Person holder = new Person(dto.getHolderId());
 		Person bank = new Person(dto.getBankId());
-		acc.setHolder(holder);
-		acc.setBank(bank);
+		TicketAccount acc = new TicketAccount(dto.getId(), dto.getName(), holder, bank, dto.getBalance(),
+				AccountType.toEnum(dto.getType()), AccountStatus.toEnum(dto.getStatus()));
 
 		for (Long cardId : dto.getCardIds()) {
 			acc.addCard(new Card(cardId));
 		}
 
-		acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		if (dto.getMethod().equals(DTOType.INSERT))
+			acc.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		
 		acc.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
 
 		return acc;

@@ -3,10 +3,7 @@ package com.vili.sorsfinance.api.framework;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.vili.sorsfinance.api.exceptions.DatabaseException;
+import com.vili.sorsfinance.api.exceptions.NoSuchEntityException;
 import com.vili.sorsfinance.api.exceptions.ResourceNotFoundException;
 
 public class DefaultService<T extends BusEntity> {
@@ -52,24 +50,18 @@ public class DefaultService<T extends BusEntity> {
 	}
 
 	public T save(T entity) {
+		if (entity == null)
+			throw new NoSuchEntityException("Entity can't be null");
+		
+		entity.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+
 		try {
-			Optional<T> aux = repository.findById(entity.getId());
-			
-			if (aux.isPresent()) {
-				try {
-					entity.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-					return repository.save(update(aux.get(), entity));
-				} catch (EntityNotFoundException | NoSuchElementException e) {
-					throw new ResourceNotFoundException(entity.getId());
-				}
-			} else {
-				entity.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-				return repository.save(entity);
-			}
+			repository.findById(entity.getId()).ifPresent(self -> update(self, entity));
 		} catch (Exception e) {
 			entity.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
-			return repository.save(entity);
 		}
+		
+		return repository.save(entity);
 	}
 
 	public List<T> saveAll(List<T> entities) {
@@ -88,7 +80,7 @@ public class DefaultService<T extends BusEntity> {
 		}
 	}
 
-	private T update(T oldEntity, T newEntity) {
+	private void update(T oldEntity, T newEntity) {
 		for (Field field : newEntity.getClass().getDeclaredFields()) {
 			try {
 				Object oldValue = field.get(oldEntity);
@@ -104,7 +96,5 @@ public class DefaultService<T extends BusEntity> {
 				// TODO
 			}
 		}
-		
-		return oldEntity;
 	}
 }

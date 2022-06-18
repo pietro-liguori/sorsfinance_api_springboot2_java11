@@ -31,10 +31,8 @@ public class PersonIdValidator implements ConstraintValidator<ValidPersonId, Lon
 	@Override
 	public boolean isValid(Long id, ConstraintValidatorContext context) {
 		List<String> list = new ArrayList<>();
-
-		if (id == null) {
-			list.add("Must not be null");
-		} else {
+		
+		if (id != null) {
 			Optional<Person> aux = repo.findById(id);
 
 			if (aux.isEmpty())

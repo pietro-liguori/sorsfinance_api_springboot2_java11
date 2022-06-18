@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.AccountDTO;
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
 import com.vili.sorsfinance.api.framework.BusEntity;
@@ -125,19 +126,19 @@ public class Account extends BusEntity {
 		}
 	}
 
-//	@SuppressWarnings("unchecked")
-//	public static <T extends Account> T fromDTO(AccountDTO dto) {
-//		AccountType type = AccountType.toEnum(dto.getType());
-//
-//		if (BANK_ACCOUNT_TYPES.contains(type))
-//			return (T) BankAccount.fromDTO(dto);
-//		
-//		if (TICKET_ACCOUNT_TYPES.contains(type))
-//			return (T) TicketAccount.fromDTO(dto);
-//		
-//		if (WALLET_TYPES.contains(type))
-//			return (T) Wallet.fromDTO(dto);
-//		
-//		return null;
-//	}
+	@SuppressWarnings("unchecked")
+	public static <T extends Account> T fromDTO(AccountDTO dto) {
+		AccountType type = AccountType.toEnum(dto.getType());
+
+		if (BANK_ACCOUNT_TYPES.contains(type))
+			return (T) BankAccount.fromDTO(dto);
+		
+		if (TICKET_ACCOUNT_TYPES.contains(type))
+			return (T) TicketAccount.fromDTO(dto);
+		
+		if (WALLET_TYPES.contains(type))
+			return (T) Wallet.fromDTO(dto);
+		
+		return null;
+	}
 }

@@ -1,5 +1,6 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,15 +10,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.AddressDTO;
 import com.vili.sorsfinance.api.framework.BusEntity;
+import com.vili.sorsfinance.api.framework.DTOType;
 
 @Entity
 @JsonPropertyOrder({ "id", "address", "number", "complement", "district", "zipCode", "city", "contact", "preferred" })
-public class Address extends BusEntity{
-	
+public class Address extends BusEntity {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private String address;
 	private String number;
 	private String complement;
@@ -28,14 +32,20 @@ public class Address extends BusEntity{
 	@JoinColumn(name = "city_id")
 	private City city;
 	@ManyToMany(mappedBy = "addresses")
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@JsonIgnoreProperties({ "addresses", "phones", "emails", "preferredContact" })
 	private Set<Contact> contacts = new HashSet<>();
-	
+
 	public Address() {
 		super();
 	}
 
-	public Address(Long id, String address, String number, String complement, String district, String zipCode, City city, Boolean preferred) {
+	public Address(Long id) {
+		super(id, Address.class);
+	}
+	
+	public Address(Long id, String address, String number, String complement, String district, String zipCode,
+			City city, Boolean preferred) {
 		super(id, Address.class);
 		this.address = address;
 		this.number = number;
@@ -109,10 +119,27 @@ public class Address extends BusEntity{
 	public void addContact(Contact contact) {
 		this.contacts.add(contact);
 	}
-	
+
 	public void addContacts(Contact... contacts) {
 		for (Contact x : contacts) {
 			this.contacts.add(x);
 		}
+	}
+
+	public static Address fromDTO(AddressDTO dto) {
+		City city = new City(dto.getCityId());
+		Address address = new Address(dto.getId(), dto.getAddress(), dto.getNumber(), dto.getComplement(), dto.getDistrict(),
+				dto.getZipCode(), city, dto.getPreferred());
+		
+		for (Long contactId : dto.getContactIds()) {
+			address.getContacts().add(new Contact(contactId));
+		}
+		
+		if (dto.getMethod().equals(DTOType.INSERT))
+			address.setCreatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		
+		address.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+
+		return address;
 	}
 }

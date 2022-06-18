@@ -55,21 +55,20 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 		if (dto.getMethod() == DTOType.INSERT) {
 			ex = Example.of(new Account(null, dto.getName(), null, null, null, null, null));
 			List<Account> accounts = accountRepo.findAll(ex);
-
-			if (!accounts.isEmpty())
+			
+			if (!accounts.isEmpty() && dto.getName() != null) 
 				list.add(new FieldMessage("name", "'" + dto.getName() + "' already in use"));
 			
 			if (dto.getType() != null) {
 				try {
 					AccountType type = AccountType.toEnum(dto.getType());
 
-					if (Account.BANK_ACCOUNT_TYPES.contains(type)) {
-						return validateBankAccount(dto, context);
-					} else if (Account.TICKET_ACCOUNT_TYPES.contains(type)) {
-						return validateTicketAccount(dto, context);
-					} else if (Account.WALLET_TYPES.contains(type)) {
-						return validateWallet(dto, context);
-					}
+					if (Account.BANK_ACCOUNT_TYPES.contains(type))
+						list.addAll(validateBankAccount(dto, context));
+					else if (Account.TICKET_ACCOUNT_TYPES.contains(type))
+						list.addAll(validateTicketAccount(dto, context));
+					else if (Account.WALLET_TYPES.contains(type))
+							list.addAll(validateWallet(dto, context));
 				} catch (EnumValueNotFoundException e) {
 					list.add(new FieldMessage("type", e.getMessage()));
 				}
@@ -87,7 +86,7 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 		return list.isEmpty();
 	}
 	
-	private boolean validateBankAccount(AccountDTO dto, ConstraintValidatorContext context) {
+	private List<FieldMessage> validateBankAccount(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
 
 		if (dto.getBankId() == null) {
@@ -184,10 +183,10 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 					.addConstraintViolation();
 		}
 
-		return list.isEmpty();
+		return list;
 	}
 	
-	private boolean validateTicketAccount(AccountDTO dto, ConstraintValidatorContext context) {
+	private List<FieldMessage> validateTicketAccount(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
 
 		if (dto.getBankId() == null) {
@@ -229,25 +228,19 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 					.addConstraintViolation();
 		}
 
-		return list.isEmpty();
+		return list;
 	}
 	
-	private boolean validateWallet(AccountDTO dto, ConstraintValidatorContext context) {
+	private List<FieldMessage> validateWallet(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
-
+		
 		if (dto.getSavings() == null) {
 			list.add(new FieldMessage("savings", "Must not be null"));
 		} else {
 			if (dto.getSavings().isNaN() || dto.getSavings() < 0)
 				list.add(new FieldMessage("savings", "Must be not be negative"));
 		}
-
-		for (FieldMessage e : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getField())
-					.addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		
+		return list;
 	}
 }
