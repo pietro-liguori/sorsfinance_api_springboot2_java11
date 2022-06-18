@@ -8,9 +8,12 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import com.vili.sorsfinance.api.entities.Account;
+import com.vili.sorsfinance.api.entities.enums.AccountStatus;
+import com.vili.sorsfinance.api.entities.enums.AccountType;
 import com.vili.sorsfinance.api.entities.enums.PersonProfile;
 import com.vili.sorsfinance.api.framework.DTO;
 import com.vili.sorsfinance.validation.constraints.ValidAccount;
+import com.vili.sorsfinance.validation.constraints.ValidEnumValue;
 import com.vili.sorsfinance.validation.constraints.ValidPersonId;
 
 @ValidAccount
@@ -23,9 +26,9 @@ public class AccountDTO extends DTO<Account> {
 	private String name;
 	@NotNull(message = "Must not be null")
 	private Double balance;
-	@NotNull(message = "Must not be null")
+	@ValidEnumValue(target = AccountType.class)
 	private Integer type;
-	@NotNull(message = "Must not be null")
+	@ValidEnumValue(target = AccountStatus.class)
 	private Integer status;
 	private Long bankId;
 	private Set<Long> cardIds;

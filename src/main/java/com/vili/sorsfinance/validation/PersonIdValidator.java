@@ -38,8 +38,7 @@ public class PersonIdValidator implements ConstraintValidator<ValidPersonId, Lon
 			if (aux.isEmpty())
 				list.add("Resource not found: " + id);
 			else {
-				boolean isApplicable = profile != PersonProfile.STANDARD && !acceptAll;
-				if (isApplicable && !aux.get().getProfile().equals(profile.getLabel()))
+				if (!acceptAll && !aux.get().getProfile().equals(profile.getLabel()))
 					list.add("Must reference to a person with " + profile + " profile");
 			}
 		}

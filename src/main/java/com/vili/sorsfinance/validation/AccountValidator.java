@@ -69,9 +69,7 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 						list.addAll(validateTicketAccount(dto, context));
 					else if (Account.WALLET_TYPES.contains(type))
 							list.addAll(validateWallet(dto, context));
-				} catch (EnumValueNotFoundException e) {
-					list.add(new FieldMessage("type", e.getMessage()));
-				}
+				} catch (EnumValueNotFoundException e) {}
 			}			
 		} else if (dto.getMethod() == DTOType.UPDATE) {
 			// TODO all account types update validation

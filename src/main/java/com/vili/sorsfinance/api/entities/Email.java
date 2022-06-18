@@ -30,6 +30,11 @@ public class Email extends BusEntity {
 		super(id, Email.class);
 	}
 
+	public Email(String email) {
+		super();
+		this.email = email;
+	}
+
 	public Email(Long id, String email, Boolean preferred) {
 		super(id, Email.class);
 		this.email = email;
@@ -56,8 +61,9 @@ public class Email extends BusEntity {
 		return contact;
 	}
 
-	public void setContact(Contact contact) {
+	public Email setContact(Contact contact) {
 		this.contact = contact;
+		return this;
 	}
 
 	public static Email fromDTO(EmailDTO dto) {

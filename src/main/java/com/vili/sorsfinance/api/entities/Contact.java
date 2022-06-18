@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.ContactDTO;
 import com.vili.sorsfinance.api.entities.enums.ContactType;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
@@ -110,7 +111,14 @@ public class Contact extends BusEntity {
 		return owner;
 	}
 
-	public void setOwner(Person owner) {
+	public Contact setOwner(Person owner) {
 		this.owner = owner;
+		return this;
+	}
+	
+	public static Contact fromDTO(ContactDTO dto) {
+		Contact contact = new Contact(dto.getId(), ContactType.toEnum(dto.getPreferredContact()));
+		contact.setOwner(new Person(dto.getOwnerId()));
+		return contact;
 	}
 }
