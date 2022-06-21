@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.AssetDTO;
 import com.vili.sorsfinance.api.entities.enums.AssetType;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
@@ -103,5 +104,18 @@ public class Asset extends BusEntity {
 			list.add(x.getTransaction());
 		}
 		return list;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Asset> T fromDTO(AssetDTO dto) {
+		AssetType type = AssetType.toEnum(dto.getType());
+
+		if (AssetType.PRODUCT.equals(type))
+			return (T) Product.fromDTO(dto);
+		
+		if (AssetType.SERVICE_PROVISION.equals(type))
+			return (T) ServiceProvision.fromDTO(dto);
+		
+		return null;
 	}
 }

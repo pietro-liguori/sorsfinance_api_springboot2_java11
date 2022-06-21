@@ -30,6 +30,10 @@ public class Category extends BusEntity {
 		super();
 	}
 
+	public Category(Long id) {
+		super(id, Category.class);
+	}
+
 	public Category(Long id, String name) {
 		super(id, Category.class);
 		this.name = name;
