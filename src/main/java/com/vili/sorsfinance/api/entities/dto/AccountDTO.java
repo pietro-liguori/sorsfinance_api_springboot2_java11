@@ -50,127 +50,143 @@ public class AccountDTO extends DTO<Account> {
 		return holderId;
 	}
 
-	public void setHolderId(Long holderId) {
+	public AccountDTO setHolderId(Long holderId) {
 		this.holderId = holderId;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public AccountDTO setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(Double balance) {
+	public AccountDTO setBalance(Double balance) {
 		this.balance = balance;
+		return this;
 	}
 
 	public Integer getType() {
 		return type;
 	}
 
-	public void setType(Integer type) {
+	public AccountDTO setType(Integer type) {
 		this.type = type;
+		return this;
 	}
 
 	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public AccountDTO setStatus(Integer status) {
 		this.status = status;
+		return this;
 	}
 
 	public Long getBankId() {
 		return bankId;
 	}
 
-	public void setBankId(Long bankId) {
+	public AccountDTO setBankId(Long bankId) {
 		this.bankId = bankId;
+		return this;
 	}
 
 	public Set<Long> getCardIds() {
 		return cardIds;
 	}
 
-	public void setCardIds(Set<Long> cards) {
+	public AccountDTO setCardIds(Set<Long> cards) {
 		this.cardIds = cards;
+		return this;
 	}
 
 	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public AccountDTO setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getAgency() {
 		return agency;
 	}
 
-	public void setAgency(String agency) {
+	public AccountDTO setAgency(String agency) {
 		this.agency = agency;
+		return this;
 	}
 
 	public Double getOverdraft() {
 		return overdraft;
 	}
 
-	public void setOverdraft(Double overdraft) {
+	public AccountDTO setOverdraft(Double overdraft) {
 		this.overdraft = overdraft;
+		return this;
 	}
 
 	public Double getInterest() {
 		return interest;
 	}
 
-	public void setInterest(Double interest) {
+	public AccountDTO setInterest(Double interest) {
 		this.interest = interest;
+		return this;
 	}
 
 	public Integer getInterestUnit() {
 		return interestUnit;
 	}
 
-	public void setInterestUnit(Integer interestUnit) {
+	public AccountDTO setInterestUnit(Integer interestUnit) {
 		this.interestUnit = interestUnit;
+		return this;
 	}
 
 	public Integer getGracePeriod() {
 		return gracePeriod;
 	}
 
-	public void setGracePeriod(Integer gracePeriod) {
+	public AccountDTO setGracePeriod(Integer gracePeriod) {
 		this.gracePeriod = gracePeriod;
+		return this;
 	}
 
 	public Integer getGracePeriodUnit() {
 		return gracePeriodUnit;
 	}
 
-	public void setGracePeriodUnit(Integer gracePeriodUnit) {
+	public AccountDTO setGracePeriodUnit(Integer gracePeriodUnit) {
 		this.gracePeriodUnit = gracePeriodUnit;
+		return this;
 	}
 
 	public Double getCreditLimit() {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(Double creditLimit) {
+	public AccountDTO setCreditLimit(Double creditLimit) {
 		this.creditLimit = creditLimit;
+		return this;
 	}
 
 	public Double getSavings() {
 		return savings;
 	}
 
-	public void setSavings(Double savings) {
+	public AccountDTO setSavings(Double savings) {
 		this.savings = savings;
+		return this;
 	}
 }

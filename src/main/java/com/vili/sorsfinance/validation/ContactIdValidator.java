@@ -10,6 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vili.sorsfinance.api.entities.Contact;
+import com.vili.sorsfinance.api.framework.FieldMessage;
 import com.vili.sorsfinance.api.repositories.ContactRepository;
 import com.vili.sorsfinance.validation.constraints.ValidContactId;
 
@@ -17,27 +18,51 @@ public class ContactIdValidator implements ConstraintValidator<ValidContactId, L
 
 	@Autowired
 	ContactRepository repo;
+	
+	private String fieldName;
 
 	@Override
 	public void initialize(ValidContactId ann) {
+		setFieldName(ann.value());
 	}
 
 	@Override
 	public boolean isValid(Long id, ConstraintValidatorContext context) {
-		List<String> list = new ArrayList<>();
+		List<FieldMessage> list = validate(id, repo, fieldName);
+
+		for (FieldMessage e : list) {
+			context.disableDefaultConstraintViolation();
+			context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation();
+		}
+
+		return list.isEmpty();
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+
+	public static List<FieldMessage> validate(Long id, ContactRepository repo, String fieldName) {
+		List<FieldMessage> list = new ArrayList<>();
 
 		if (id != null) {
 			Optional<Contact> aux = repo.findById(id);
 
 			if (aux.isEmpty())
-				list.add("Resource not found: " + id);
+				list.add(new FieldMessage(fieldName, "Resource not found: " + id));
+		} else {
+			String msg = "Must not be null";
+			
+			if (fieldName.equals("contactIds[]"))
+				msg = "Must not have null elements";
+			
+			list.add(new FieldMessage(fieldName, msg));
 		}
 
-		for (String msg : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return list;
 	}
 }

@@ -43,32 +43,36 @@ public class Phone extends BusEntity {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public Phone setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getType() {
 		return PhoneType.toEnum(type).getLabel();
 	}
 
-	public void setType(PhoneType type) {
+	public Phone setType(PhoneType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public Boolean getPreferred() {
 		return preferred;
 	}
 
-	public void setPreferred(Boolean preferred) {
+	public Phone setPreferred(Boolean preferred) {
 		this.preferred = preferred;
+		return this;
 	}
 
 	public Contact getContact() {
 		return contact;
 	}
 
-	public void setContact(Contact contact) {
+	public Phone setContact(Contact contact) {
 		this.contact = contact;
+		return this;
 	}
 	
 	public static Phone fromDTO(PhoneDTO dto) {

@@ -30,8 +30,9 @@ public class Wallet extends Account {
 		return savings;
 	}
 
-	public void setSavings(Double savings) {
+	public Wallet setSavings(Double savings) {
 		this.savings = savings;
+		return this;
 	}
 
 	public static Wallet fromDTO(AccountDTO dto) {

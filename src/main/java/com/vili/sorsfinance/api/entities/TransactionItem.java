@@ -42,24 +42,27 @@ public class TransactionItem extends BusEntity{
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public TransactionItem setPrice(Double price) {
 		this.price = price;
+		return this;
 	}
 
 	public Integer getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Integer quantity) {
+	public TransactionItem setQuantity(Integer quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 
 	public Double getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(Double discount) {
+	public TransactionItem setDiscount(Double discount) {
 		this.discount = discount;
+		return this;
 	}
 	
 	public Transaction getTransaction() {

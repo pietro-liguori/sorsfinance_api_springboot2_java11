@@ -1,5 +1,6 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.CategoryDTO;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
 @Entity
@@ -37,35 +39,46 @@ public class Category extends BusEntity {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Category setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Set<Asset> getAssets() {
 		return assets;
 	}
 
-	public void addAsset(Asset asset) {
+	public Category addAsset(Asset asset) {
 		assets.add(asset);
+		return this;
 	}
 
-	public void addAssets(Asset... assets) {
+	public Category addAssets(Asset... assets) {
 		for (Asset x : assets) {
 			this.assets.add(x);
 		}
+		return this;
 	}
 
 	public Set<Transaction> getTransactions() {
 		return transactions;
 	}
 
-	public void addTransaction(Transaction transaction) {
+	public Category addTransaction(Transaction transaction) {
 		transactions.add(transaction);
+		return this;
 	}
 	
-	public void addTransactions(Transaction... transactions) {
+	public Category addTransactions(Transaction... transactions) {
 		for (Transaction x : transactions) {
 			this.transactions.add(x);
 		}
+		return this;
+	}
+	
+	public static Category fromDTO(CategoryDTO dto) {
+		Category cat = new Category(dto.getId(), dto.getName());
+		cat.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		return cat;
 	}
 }

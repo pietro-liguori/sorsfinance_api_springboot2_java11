@@ -41,8 +41,9 @@ public class TicketAccount extends Account {
 		return bank;
 	}
 
-	public void setBank(Person bank) {
+	public TicketAccount setBank(Person bank) {
 		this.bank = bank;
+		return this;
 	}
 
 	public Set<Card> getCards() {
@@ -58,7 +59,6 @@ public class TicketAccount extends Account {
 		for (Card x : cards) {
 			this.cards.add(x);
 		}
-		
 		return this;
 	}
 

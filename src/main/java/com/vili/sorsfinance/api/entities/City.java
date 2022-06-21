@@ -1,5 +1,7 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -7,6 +9,7 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.CityDTO;
 import com.vili.sorsfinance.api.framework.BusEntity;
 
 @Entity
@@ -41,15 +44,23 @@ public class City extends BusEntity {
 		return name;
 	}
 
-	public void setName(String name) {
+	public City setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public State getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public City setState(State state) {
 		this.state = state;
+		return this;
+	}
+	
+	public static City fromDTO(CityDTO dto) {
+		City city = new City(dto.getId(), dto.getName(), new State(dto.getStateId()));
+		city.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+		return city;
 	}
 }

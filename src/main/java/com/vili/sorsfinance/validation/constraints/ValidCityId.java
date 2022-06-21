@@ -15,7 +15,7 @@ import com.vili.sorsfinance.validation.CityIdValidator;
 @Documented
 @NotNull(message = "Must not be null")
 @Constraint(validatedBy = CityIdValidator.class)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidCityId {
 

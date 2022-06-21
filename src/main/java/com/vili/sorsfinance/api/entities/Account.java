@@ -53,6 +53,10 @@ public class Account extends BusEntity {
 		super();
 	}
 	
+	public Account(Long id) {
+		super(id, Account.class);
+	}
+
 	public Account(Long id, Class<?> sorsClass) {
 		super(id, sorsClass);
 	}
@@ -70,16 +74,18 @@ public class Account extends BusEntity {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Account setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public Double getBalance() {
 		return balance;
 	}
 
-	public void setBalance(Double balance) {
+	public Account setBalance(Double balance) {
 		this.balance = balance;
+		return this;
 	}
 
 	public String getType() {
@@ -89,8 +95,9 @@ public class Account extends BusEntity {
 		return AccountType.toEnum(type).getLabel();
 	}
 
-	public void setType(AccountType type) {
+	public Account setType(AccountType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public String getStatus() {
@@ -100,30 +107,34 @@ public class Account extends BusEntity {
 		return AccountStatus.toEnum(status).getLabel();
 	}
 
-	public void setStatus(AccountStatus status) {
+	public Account setStatus(AccountStatus status) {
 		this.status = status.getCode();
+		return this;
 	}
 
 	public Person getHolder() {
 		return holder;
 	}
 
-	public void setHolder(Person holder) {
+	public Account setHolder(Person holder) {
 		this.holder = holder;
+		return this;
 	}
 
 	public Set<Payment> getPayments() {
 		return payments;
 	}
 	
-	public void addPayment(Payment payment) {
+	public Account addPayment(Payment payment) {
 		payments.add(payment);
+		return this;
 	}
 	
-	public void addPayments(Payment... payments) {
+	public Account addPayments(Payment... payments) {
 		for (Payment x : payments) {
 			this.payments.add(x);
 		}
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")

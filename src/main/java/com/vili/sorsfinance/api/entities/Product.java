@@ -30,15 +30,17 @@ public class Product extends Asset {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(Date expirationDate) {
+	public Product setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+		return this;
 	}
 
 	public String getBrand() {
 		return brand;
 	}
 
-	public void setBrand(String brand) {
+	public Product setBrand(String brand) {
 		this.brand = brand;
+		return this;
 	}
 }

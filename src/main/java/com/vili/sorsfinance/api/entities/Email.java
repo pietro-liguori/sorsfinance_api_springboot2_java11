@@ -45,16 +45,18 @@ public class Email extends BusEntity {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public Email setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 
 	public Boolean getPreferred() {
 		return preferred;
 	}
 
-	public void setPreferred(Boolean preferred) {
+	public Email setPreferred(Boolean preferred) {
 		this.preferred = preferred;
+		return this;
 	}
 
 	public Contact getContact() {

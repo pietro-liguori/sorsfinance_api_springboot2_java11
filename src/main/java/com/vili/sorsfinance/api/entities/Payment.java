@@ -76,63 +76,71 @@ public class Payment extends BusEntity {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public Payment setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public String getType() {
 		return PaymentType.toEnum(type).getLabel();
 	}
 
-	public void setType(PaymentType type) {
+	public Payment setType(PaymentType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public Payment setValue(Double value) {
 		this.value = value;
+		return this;
 	}
 
 	public String getStatus() {
 		return PaymentStatus.toEnum(status).getLabel();
 	}
 
-	public void setStatus(PaymentStatus status) {
+	public Payment setStatus(PaymentStatus status) {
 		this.status = status.getCode();
+		return this;
 	}
 
 	public Account getAccount() {
 		return account;
 	}
 
-	public void setAccount(Account account) {
+	public Payment setAccount(Account account) {
 		this.account = account;
+		return this;
 	}
 
 	public Person getResponsible() {
 		return responsible;
 	}
 
-	public void setResponsible(Person responsible) {
+	public Payment setResponsible(Person responsible) {
 		this.responsible = responsible;
+		return this;
 	}
 
 	public Transaction getTransaction() {
 		return transaction;
 	}
 
-	public void setTransaction(Transaction transaction) {
+	public Payment setTransaction(Transaction transaction) {
 		this.transaction = transaction;
+		return this;
 	}
 
 	public Card getCard() {
 		return card;
 	}
 
-	public void setCard(Card card) {
+	public Payment setCard(Card card) {
 		this.card = card;
+		return this;
 	}
 }

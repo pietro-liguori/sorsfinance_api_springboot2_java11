@@ -74,72 +74,81 @@ public class BankAccount extends Account {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public BankAccount setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getAgency() {
 		return agency;
 	}
 
-	public void setAgency(String agency) {
+	public BankAccount setAgency(String agency) {
 		this.agency = agency;
+		return this;
 	}
 
 	public Double getOverdraft() {
 		return overdraft;
 	}
 
-	public void setOverdraft(Double overdraft) {
+	public BankAccount setOverdraft(Double overdraft) {
 		this.overdraft = overdraft;
+		return this;
 	}
 
 	public Double getInterest() {
 		return interest;
 	}
 
-	public void setInterest(Double interest) {
+	public BankAccount setInterest(Double interest) {
 		this.interest = interest;
+		return this;
 	}
 
 	public String getInterestUnit() {
 		return PeriodUnit.toEnum(interestUnit).getLabel();
 	}
 
-	public void setInterestUnit(PeriodUnit interestUnit) {
+	public BankAccount setInterestUnit(PeriodUnit interestUnit) {
 		this.interestUnit = interestUnit.getCode();
+		return this;
 	}
 
 	public Integer getGracePeriod() {
 		return gracePeriod;
 	}
 
-	public void setGracePeriod(Integer gracePeriod) {
+	public BankAccount setGracePeriod(Integer gracePeriod) {
 		this.gracePeriod = gracePeriod;
+		return this;
 	}
 
 	public String getGracePeriodUnit() {
 		return PeriodUnit.toEnum(gracePeriodUnit).getLabel();
 	}
 
-	public void setGracePeriodUnit(PeriodUnit gracePeriodUnit) {
+	public BankAccount setGracePeriodUnit(PeriodUnit gracePeriodUnit) {
 		this.gracePeriodUnit = gracePeriodUnit.getCode();
+		return this;
 	}
 
 	public Double getCreditLimit() {
 		return creditLimit;
 	}
 
-	public void setCreditLimit(Double creditLimit) {
+	public BankAccount setCreditLimit(Double creditLimit) {
 		this.creditLimit = creditLimit;
+		return this;
 	}
 
 	public Person getBank() {
 		return bank;
 	}
 
-	public void setBank(Person bank) {
+	public BankAccount setBank(Person bank) {
 		this.bank = bank;
+		return this;
 	}
 
 	public Set<Card> getCards() {
@@ -155,7 +164,6 @@ public class BankAccount extends Account {
 		for (Card x : cards) {
 			this.cards.add(x);
 		}
-		
 		return this;
 	}
 

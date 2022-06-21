@@ -48,5 +48,4 @@ public enum CardType {
 		
 		throw new EnumValueNotFoundException(label, "label", CardType.class);
 	}
-
 }

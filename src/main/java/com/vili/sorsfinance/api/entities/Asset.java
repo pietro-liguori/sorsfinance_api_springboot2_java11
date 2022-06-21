@@ -50,44 +50,50 @@ public class Asset extends BusEntity {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Asset setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getType() {
 		return AssetType.toEnum(type).getLabel();
 	}
 
-	public void setType(AssetType type) {
+	public Asset setType(AssetType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public Set<Category> getCategories() {
 		return categories;
 	}
 
-	public void addCategory(Category category) {
+	public Asset addCategory(Category category) {
 		categories.add(category);
+		return this;
 	}
 
-	public void addCategories(Category... categories) {
+	public Asset addCategories(Category... categories) {
 		for (Category x : categories) {
 			this.categories.add(x);
 		}
+		return this;
 	}
 
 	public Set<TransactionItem> getItems() {
 		return items;
 	}
 	
-	public void addItem(TransactionItem item) {
+	public Asset addItem(TransactionItem item) {
 		items.add(item);
+		return this;
 	}
 
-	public void addItems(TransactionItem... items) {
+	public Asset addItems(TransactionItem... items) {
 		for (TransactionItem x : items) {
 			this.items.add(x);
 		}
+		return this;
 	}
 
 	@JsonIgnore

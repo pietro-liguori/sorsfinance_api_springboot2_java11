@@ -59,70 +59,79 @@ public class CreditCardStatement extends BusEntity {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public CreditCardStatement setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public Date getClosingDate() {
 		return closingDate;
 	}
 
-	public void setClosingDate(Date closingDate) {
+	public CreditCardStatement setClosingDate(Date closingDate) {
 		this.closingDate = closingDate;
+		return this;
 	}
 
 	public Date getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(Date dueDate) {
+	public CreditCardStatement setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
+		return this;
 	}
 
 	public Date getPayDate() {
 		return payDate;
 	}
 
-	public void setPayDate(Date payDate) {
+	public CreditCardStatement setPayDate(Date payDate) {
 		this.payDate = payDate;
+		return this;
 	}
 
 	public String getStatus() {
 		return PaymentStatus.toEnum(status).getLabel();
 	}
 
-	public void setStatus(PaymentStatus status) {
+	public CreditCardStatement setStatus(PaymentStatus status) {
 		this.status = status.getCode();
+		return this;
 	}
 
 	public Payment getPayment() {
 		return payment;
 	}
 
-	public void setPayment(Payment payment) {
+	public CreditCardStatement setPayment(Payment payment) {
 		this.payment = payment;
+		return this;
 	}
 
 	public CreditCard getCard() {
 		return card;
 	}
 
-	public void setCard(CreditCard card) {
+	public CreditCardStatement setCard(CreditCard card) {
 		this.card = card;
+		return this;
 	}
 
 	public Set<CreditInstallment> getItems() {
 		return items;
 	}
 
-	public void addItem(CreditInstallment item) {
+	public CreditCardStatement addItem(CreditInstallment item) {
 		items.add(item);
+		return this;
 	}
 
-	public void addItems(CreditInstallment... items) {
+	public CreditCardStatement addItems(CreditInstallment... items) {
 		for (CreditInstallment x : items) {
 			this.items.add(x);
 		}
+		return this;
 	}
 
 	@JsonIgnore

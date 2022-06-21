@@ -6,8 +6,6 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.vili.sorsfinance.api.entities.enums.AccountStatus;
 import com.vili.sorsfinance.api.entities.enums.AccountType;
 import com.vili.sorsfinance.api.entities.enums.AssetType;
@@ -22,13 +20,10 @@ import com.vili.sorsfinance.api.entities.enums.PersonProfile;
 import com.vili.sorsfinance.api.entities.enums.PersonType;
 import com.vili.sorsfinance.api.entities.enums.PhoneType;
 import com.vili.sorsfinance.api.entities.enums.TransactionType;
-import com.vili.sorsfinance.api.repositories.CityRepository;
+import com.vili.sorsfinance.api.framework.FieldMessage;
 import com.vili.sorsfinance.validation.constraints.ValidEnumValue;
 
 public class EnumValidator implements ConstraintValidator<ValidEnumValue, Integer> {
-
-	@Autowired
-	CityRepository repo;
 
 	private Class<?> target;
 	
@@ -39,48 +34,11 @@ public class EnumValidator implements ConstraintValidator<ValidEnumValue, Intege
 
 	@Override
 	public boolean isValid(Integer code, ConstraintValidatorContext context) {
-		List<String> list = new ArrayList<>();
+		List<FieldMessage> list = validate(code, target);
 
-		if (code != null) {
-			try {
-				if (target.getSimpleName().equals(AccountStatus.class.getSimpleName()))
-					AccountStatus.toEnum(code);
-				else if (target.getSimpleName().equals(AccountType.class.getSimpleName()))
-					AccountType.toEnum(code);
-				else if (target.getSimpleName().equals(AssetType.class.getSimpleName()))
-					AssetType.toEnum(code);
-				else if (target.getSimpleName().equals(CardStatus.class.getSimpleName()))
-					CardStatus.toEnum(code);
-				else if (target.getSimpleName().equals(CardType.class.getSimpleName()))
-					CardType.toEnum(code);
-				else if (target.getSimpleName().equals(ContactType.class.getSimpleName()))
-					ContactType.toEnum(code);
-				else if (target.getSimpleName().equals(InstallmentOption.class.getSimpleName()))
-					InstallmentOption.toEnum(code);
-				else if (target.getSimpleName().equals(PaymentStatus.class.getSimpleName()))
-					PaymentStatus.toEnum(code);
-				else if (target.getSimpleName().equals(PaymentType.class.getSimpleName()))
-					PaymentType.toEnum(code);
-				else if (target.getSimpleName().equals(PeriodUnit.class.getSimpleName()))
-					PeriodUnit.toEnum(code);
-				else if (target.getSimpleName().equals(PersonProfile.class.getSimpleName()))
-					PersonProfile.toEnum(code);
-				else if (target.getSimpleName().equals(PersonType.class.getSimpleName()))
-					PersonType.toEnum(code);
-				else if (target.getSimpleName().equals(PhoneType.class.getSimpleName()))
-					PhoneType.toEnum(code);
-				else if (target.getSimpleName().equals(TransactionType.class.getSimpleName()))
-					TransactionType.toEnum(code);
-				else
-					list.add("Validation not implemented for '" + target.getSimpleName() + "'");
-			} catch (Exception e) {
-				list.add(e.getMessage());
-			}
-		}
-
-		for (String msg : list) {
+		for (FieldMessage x : list) {
 			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
+			context.buildConstraintViolationWithTemplate(x.getMessage()).addConstraintViolation();
 		}
 
 		return list.isEmpty();
@@ -92,5 +50,79 @@ public class EnumValidator implements ConstraintValidator<ValidEnumValue, Intege
 
 	public void setTarget(Class<?> target) {
 		this.target = target;
+	}
+	
+	public static List<FieldMessage> validate(Integer code, Class<?> target) {
+		List<FieldMessage> list = new ArrayList<>();
+		String fieldName = "enumField";
+		
+		if (code != null) {
+			try {
+				if (target.getSimpleName().equals(AccountStatus.class.getSimpleName())) {
+					fieldName = "status";
+					AccountStatus.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(AccountType.class.getSimpleName())) {
+					fieldName = "type";
+					AccountType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(AssetType.class.getSimpleName())) {
+					fieldName = "type";
+					AssetType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(CardStatus.class.getSimpleName())) {
+					fieldName = "status";
+					CardStatus.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(CardType.class.getSimpleName())) {
+					fieldName = "type";
+					CardType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(ContactType.class.getSimpleName())) {
+					fieldName = "type";
+					ContactType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(InstallmentOption.class.getSimpleName())) {
+					fieldName = "option";
+					InstallmentOption.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PaymentStatus.class.getSimpleName())) {
+					fieldName = "status";
+					PaymentStatus.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PaymentType.class.getSimpleName())) {
+					fieldName = "type";
+					PaymentType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PeriodUnit.class.getSimpleName())) {
+					fieldName = "unit";
+					PeriodUnit.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PersonProfile.class.getSimpleName())) {
+					fieldName = "profile";
+					PersonProfile.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PersonType.class.getSimpleName())) {
+					fieldName = "type";
+					PersonType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(PhoneType.class.getSimpleName())) {
+					fieldName = "type";
+					PhoneType.toEnum(code);
+				}
+				else if (target.getSimpleName().equals(TransactionType.class.getSimpleName())) {
+					fieldName = "type";
+					TransactionType.toEnum(code);
+				}
+				else
+					list.add(new FieldMessage(fieldName, "Validation not implemented for '" + target.getSimpleName() + "'"));
+			} catch (Exception e) {
+				list.add(new FieldMessage(fieldName, e.getMessage()));
+			}
+		} else {
+			list.add(new FieldMessage(fieldName, "Must not be null"));
+		}
+
+		return list;
 	}
 }

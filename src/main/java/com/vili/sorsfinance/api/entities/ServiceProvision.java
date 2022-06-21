@@ -27,7 +27,8 @@ public class ServiceProvision extends Asset {
 		return deliveryDate;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public ServiceProvision setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+		return this;
 	}
 }

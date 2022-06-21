@@ -8,18 +8,18 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
-import com.vili.sorsfinance.validation.ContactListValidator;
+import com.vili.sorsfinance.validation.CountryValidator;
 
 @Documented
-@NotEmpty(message = "Must reference at least one contact")
-@Constraint(validatedBy = ContactListValidator.class)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@NotBlank(message = "Must not be null or empty")
+@Constraint(validatedBy = CountryValidator.class)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidContactList {
+public @interface ValidCountry {
 
-	String message() default "Contact id validation error";
+	String message() default "Country validation error";
 
     Class<?>[] groups() default {};
 

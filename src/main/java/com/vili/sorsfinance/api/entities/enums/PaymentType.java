@@ -19,7 +19,7 @@ public enum PaymentType {
 	
 	private Integer code;
 	private String label;
-	
+
 	private PaymentType(Integer code, String label) {
 		this.code = code;
 		this.label = label;
@@ -32,7 +32,7 @@ public enum PaymentType {
 	public String getLabel() {
 		return label;
 	}
-	
+
 	public static PaymentType toEnum(Integer code) {
 		for (PaymentType x : PaymentType.values()) {
 			if (x.getCode() == code) {

@@ -28,31 +28,35 @@ public class PhoneDTO extends DTO<Phone> {
 		return preferred;
 	}
 
-	public void setPreferred(Boolean preferred) {
+	public PhoneDTO setPreferred(Boolean preferred) {
 		this.preferred = preferred;
+		return this;
 	}
 
 	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public PhoneDTO setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public Long getContactId() {
 		return contactId;
 	}
 
-	public void setContactId(Long contactId) {
+	public PhoneDTO setContactId(Long contactId) {
 		this.contactId = contactId;
+		return this;
 	}
 
 	public Integer getType() {
 		return type;
 	}
 
-	public void setType(Integer type) {
+	public PhoneDTO setType(Integer type) {
 		this.type = type;
+		return this;
 	}
 }

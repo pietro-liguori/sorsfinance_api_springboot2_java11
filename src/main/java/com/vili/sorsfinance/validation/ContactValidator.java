@@ -13,26 +13,16 @@ import com.vili.sorsfinance.api.entities.Person;
 import com.vili.sorsfinance.api.entities.dto.ContactDTO;
 import com.vili.sorsfinance.api.framework.DTOType;
 import com.vili.sorsfinance.api.framework.FieldMessage;
-import com.vili.sorsfinance.api.repositories.AddressRepository;
-import com.vili.sorsfinance.api.repositories.EmailRepository;
 import com.vili.sorsfinance.api.repositories.PersonRepository;
-import com.vili.sorsfinance.api.repositories.PhoneRepository;
 import com.vili.sorsfinance.validation.constraints.ValidContact;
 
 public class ContactValidator implements ConstraintValidator<ValidContact, ContactDTO> {
 
 	@Autowired
-	AddressRepository addressRepo;
-	@Autowired
-	EmailRepository emailRepo;
-	@Autowired
 	PersonRepository personRepo;
-	@Autowired
-	PhoneRepository phoneRepo;
 
 	@Override
 	public void initialize(ValidContact ann) {
-
 	}
 
 	@Override

@@ -43,5 +43,4 @@ public enum ContactType {
 		
 		throw new EnumValueNotFoundException(label, "label", ContactType.class);
 	}
-
 }

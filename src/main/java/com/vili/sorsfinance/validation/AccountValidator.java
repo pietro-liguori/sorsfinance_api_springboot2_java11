@@ -55,10 +55,10 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 		if (dto.getMethod() == DTOType.INSERT) {
 			ex = Example.of(new Account(null, dto.getName(), null, null, null, null, null));
 			List<Account> accounts = accountRepo.findAll(ex);
-			
-			if (!accounts.isEmpty() && dto.getName() != null) 
+
+			if (!accounts.isEmpty() && dto.getName() != null)
 				list.add(new FieldMessage("name", "'" + dto.getName() + "' already in use"));
-			
+
 			if (dto.getType() != null) {
 				try {
 					AccountType type = AccountType.toEnum(dto.getType());
@@ -68,9 +68,10 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 					else if (Account.TICKET_ACCOUNT_TYPES.contains(type))
 						list.addAll(validateTicketAccount(dto, context));
 					else if (Account.WALLET_TYPES.contains(type))
-							list.addAll(validateWallet(dto, context));
-				} catch (EnumValueNotFoundException e) {}
-			}			
+						list.addAll(validateWallet(dto, context));
+				} catch (EnumValueNotFoundException e) {
+				}
+			}
 		} else if (dto.getMethod() == DTOType.UPDATE) {
 			// TODO all account types update validation
 		}
@@ -83,7 +84,7 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 
 		return list.isEmpty();
 	}
-	
+
 	private List<FieldMessage> validateBankAccount(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
 
@@ -95,29 +96,28 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 			if (aux.isEmpty())
 				list.add(new FieldMessage("bankId", "Resource not found: " + dto.getBankId()));
 			else if (!aux.get().getProfile().equals(PersonProfile.BANK.getLabel()))
-				list.add(new FieldMessage("bankId", "Must reference to a person with " + PersonProfile.BANK + " profile"));
+				list.add(new FieldMessage("bankId",
+						"Must reference to a person with " + PersonProfile.BANK + " profile"));
 		}
 
-		
 		if (dto.getCardIds() != null) {
-			int i = 0;
 			for (Long cardId : dto.getCardIds()) {
-				
+
 				if (cardId == null) {
-					list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Cannot be null. Delete the element from list or inform a valid card id"));
+					list.add(new FieldMessage("cardIds[]", "Must not be null. Delete null elements from list"));
 				} else {
 					Optional<Card> aux = cardRepo.findById(cardId);
-					
+
 					if (aux.isEmpty())
-						list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Resource not found: " + cardId));
+						list.add(new FieldMessage("cardIds[]", "Resource not found: " + cardId));
 					else {
 						List<BankAccount> accounts = bankAccountRepo.findByCardsId(cardId);
-						
+
 						if (!accounts.isEmpty())
-							list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Card " + cardId + " already referenced to bank account: " + accounts.get(0).getName()));
+							list.add(new FieldMessage("cardIds[]", "Card '" + cardId
+									+ "' already referenced to bank account: " + accounts.get(0).getName()));
 					}
 				}
-				i++;
 			}
 		}
 
@@ -140,15 +140,12 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 			if (dto.getInterest().isNaN() || dto.getInterest() < 0)
 				list.add(new FieldMessage("interest", "Must be not be negative"));
 		}
-		
+
 		if (dto.getInterestUnit() == null) {
 			list.add(new FieldMessage("interestUnit", "Must not be null"));
 		} else {
-			try {
-				PeriodUnit.toEnum(dto.getInterestUnit());
-			} catch (EnumValueNotFoundException e) {
-				list.add(new FieldMessage("interestUnit", e.getMessage()));
-			}
+			EnumValidator.validate(dto.getInterestUnit(), PeriodUnit.class)
+					.forEach(e -> list.add(new FieldMessage("interestUnit", e.getMessage())));
 		}
 
 		if (dto.getGracePeriod() == null) {
@@ -161,11 +158,8 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 		if (dto.getGracePeriodUnit() == null) {
 			list.add(new FieldMessage("gracePeriodUnit", "Must not be null"));
 		} else {
-			try {
-				PeriodUnit.toEnum(dto.getGracePeriodUnit());
-			} catch (EnumValueNotFoundException e) {
-				list.add(new FieldMessage("gracePeriodUnit", e.getMessage()));
-			}
+			EnumValidator.validate(dto.getGracePeriodUnit(), PeriodUnit.class)
+					.forEach(e -> list.add(new FieldMessage("gracePeriodUnit", e.getMessage())));
 		}
 
 		if (dto.getCreditLimit() == null) {
@@ -183,7 +177,7 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 
 		return list;
 	}
-	
+
 	private List<FieldMessage> validateTicketAccount(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
 
@@ -195,28 +189,29 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 			if (aux.isEmpty())
 				list.add(new FieldMessage("bankId", "Resource not found: " + dto.getBankId()));
 			else if (!aux.get().getProfile().equals(PersonProfile.BANK.getLabel()))
-				list.add(new FieldMessage("bankId", "Must reference to a person with " + PersonProfile.BANK + " profile"));
+				list.add(new FieldMessage("bankId",
+						"Must reference to a person with " + PersonProfile.BANK + " profile"));
 		}
 
 		if (dto.getCardIds() != null) {
-			int i = 0;
 			for (Long cardId : dto.getCardIds()) {
-				
+
 				if (cardId == null) {
-					list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Cannot be null. Delete the element from list or inform a valid card id"));
+					list.add(new FieldMessage("cardIds[]", "Must not be null. Delete null elements"));
 				} else {
 					Optional<Card> aux = cardRepo.findById(cardId);
-					
+
 					if (aux.isEmpty())
-						list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Resource not found: " + cardId));
+						list.add(new FieldMessage("cardIds[]",
+								"Resource not found: " + cardId));
 					else {
 						List<TicketAccount> accounts = ticketAccountRepo.findByCardsId(cardId);
-						
+
 						if (!accounts.isEmpty())
-							list.add(new FieldMessage("cardIds", "Element cardIds[" + i + "] - Card " + cardId + " already referenced to ticket account: " + accounts.get(0).getName()));
+							list.add(new FieldMessage("cardIds[]", "Card '" + cardId
+									+ "' already referenced to ticket account: " + accounts.get(0).getName()));
 					}
 				}
-				i++;
 			}
 		}
 
@@ -228,17 +223,17 @@ public class AccountValidator implements ConstraintValidator<ValidAccount, Accou
 
 		return list;
 	}
-	
+
 	private List<FieldMessage> validateWallet(AccountDTO dto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
-		
+
 		if (dto.getSavings() == null) {
 			list.add(new FieldMessage("savings", "Must not be null"));
 		} else {
 			if (dto.getSavings().isNaN() || dto.getSavings() < 0)
 				list.add(new FieldMessage("savings", "Must be not be negative"));
 		}
-		
+
 		return list;
 	}
 }

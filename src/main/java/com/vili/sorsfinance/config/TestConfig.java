@@ -86,26 +86,11 @@ public class TestConfig implements CommandLineRunner {
 		City cty5 = new City(null, "Petrópolis", st2);
 		City cty6 = new City(null, "Paraty", st2);
 		
+		
 		repository.saveAll(Arrays.asList(cnt1));
 		repository.saveAll(Arrays.asList(st1, st2));
 		repository.saveAll(Arrays.asList(cty1, cty2, cty3, cty4, cty5, cty6));
 		
-		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true);
-		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
-		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
-	
-		repository.saveAll(Arrays.asList(adr1));
-		repository.saveAll(Arrays.asList(em1));
-		repository.saveAll(Arrays.asList(ph1));
-
-		Contact ctc1 = new Contact(null, ContactType.PHONE);
-
-		ctc1.addPhone(ph1);
-		ctc1.addAddress(adr1);
-		ctc1.addEmail(em1);
-		
-		repository.saveAll(Arrays.asList(ctc1));
-
 		Branch bch1 = new Branch(null, "Pessoa Física");
 		Branch bch2 = new Branch(null, "Varejo de móveis e eletrodomésticos");
 		Branch bch3 = new Branch(null, "Costureira");
@@ -119,8 +104,6 @@ public class TestConfig implements CommandLineRunner {
 		Person p4 = new Person(null, "Casa da costura", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
 		Person p5 = new Person(null, "Sodexo", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
 
-		p1.setContact(ctc1);
-		
 		p1.setBranch(bch1);
 		p2.setBranch(bch4);
 		p3.setBranch(bch2);
@@ -146,7 +129,23 @@ public class TestConfig implements CommandLineRunner {
 		repository.saveAll(Arrays.asList(p1, p2, p3, p4, p5));
 		repository.saveAll(Arrays.asList(acc1, acc2, acc3));
 		repository.saveAll(Arrays.asList(cd1, cd2, cd3));
+
+		Contact ctc1 = new Contact(null, p1, ContactType.PHONE);
+
+		repository.saveAll(Arrays.asList(ctc1));
+
+		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true);
+		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
+		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
 		
+		adr1.addContact(ctc1);
+		em1.setContact(ctc1);
+		ph1.setContact(ctc1);
+		
+		repository.saveAll(Arrays.asList(adr1));
+		repository.saveAll(Arrays.asList(em1));
+		repository.saveAll(Arrays.asList(ph1));
+
 		Product a1 = new Product(null, "Televisão", AssetType.PRODUCT, null, "Samsung");
 		ServiceProvision a2 = new ServiceProvision(null, "Conserto de calça jeans", AssetType.SERVICE_PROVISION, null);
 		Product a3 = new Product(null, "Liquidificador", AssetType.PRODUCT, null, "Philco");

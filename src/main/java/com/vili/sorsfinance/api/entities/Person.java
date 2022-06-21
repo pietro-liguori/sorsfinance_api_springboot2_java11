@@ -1,5 +1,6 @@
 package com.vili.sorsfinance.api.entities;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.entities.dto.PersonDTO;
 import com.vili.sorsfinance.api.entities.enums.PersonProfile;
 import com.vili.sorsfinance.api.entities.enums.PersonType;
 import com.vili.sorsfinance.api.framework.BusEntity;
@@ -31,10 +33,9 @@ public class Person extends BusEntity {
 	private Integer type;
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer profile;
-	@OneToOne
+	@OneToOne(mappedBy = "owner")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties({ "owner" })
-	@JoinColumn(name = "contact_id")
 	private Contact contact;
 	@ManyToOne
 	@JoinColumn(name = "branch_id")
@@ -67,16 +68,18 @@ public class Person extends BusEntity {
 		return name;
 	}
 
-	public void setName(String name) {
+	public Person setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getSocialId() {
 		return socialId;
 	}
 
-	public void setSocialId(String socialId) {
+	public Person setSocialId(String socialId) {
 		this.socialId = socialId;
+		return this;
 	}
 
 	public String getType() {
@@ -86,8 +89,9 @@ public class Person extends BusEntity {
 		return PersonType.toEnum(type).getLabel();
 	}
 
-	public void setType(PersonType type) {
+	public Person setType(PersonType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public String getProfile() {
@@ -97,51 +101,65 @@ public class Person extends BusEntity {
 		return PersonProfile.toEnum(profile).getLabel();
 	}
 
-	public void setProfile(PersonProfile profile) {
+	public Person setProfile(PersonProfile profile) {
 		this.profile = profile.getCode();
+		return this;
 	}
 
 	public Contact getContact() {
 		return contact;
 	}
 
-	public void setContact(Contact contact) {
+	public Person setContact(Contact contact) {
 		this.contact = contact;
+		return this;
 	}
 
 	public Branch getBranch() {
 		return branch;
 	}
 
-	public void setBranch(Branch branch) {
+	public Person setBranch(Branch branch) {
 		this.branch = branch;
+		return this;
 	}
 
 	public Set<Transaction> getTransactions() {
 		return transactions;
 	}
 
-	public void addTransaction(Transaction transaction) {
+	public Person addTransaction(Transaction transaction) {
 		transactions.add(transaction);
+		return this;
 	}
 
-	public void addTransactions(Transaction... transactions) {
+	public Person addTransactions(Transaction... transactions) {
 		for (Transaction x : transactions) {
 			this.transactions.add(x);
 		}
+		return this;
 	}
 
 	public Set<Account> getAccounts() {
 		return accounts;
 	}
 
-	public void addAccount(Account account) {
+	public Person addAccount(Account account) {
 		accounts.add(account);
+		return this;
 	}
 	
-	public void addAccounts(Account... accounts) {
+	public Person addAccounts(Account... accounts) {
 		for (Account x : accounts) {
 			this.accounts.add(x);
 		}
+		return this;
+	}
+	
+	public static Person fromDTO(PersonDTO dto) {
+		Person person = new Person(dto.getId(), dto.getName(), dto.getSocialId(), PersonType.toEnum(dto.getType()), PersonProfile.toEnum(dto.getProfile()));
+		person.setUpdatedAt(new java.sql.Date(new Date().toInstant().toEpochMilli()));
+
+		return person;
 	}
 }

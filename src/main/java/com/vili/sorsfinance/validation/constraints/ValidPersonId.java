@@ -16,7 +16,7 @@ import com.vili.sorsfinance.validation.PersonIdValidator;
 @Documented
 @NotNull(message = "Must not be null")
 @Constraint(validatedBy = PersonIdValidator.class)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPersonId {
 

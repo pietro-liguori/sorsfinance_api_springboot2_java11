@@ -44,24 +44,27 @@ public class CreditInstallment extends BusEntity {
 		return value;
 	}
 
-	public void setValue(Double value) {
+	public CreditInstallment setValue(Double value) {
 		this.value = value;
+		return this;
 	}
 
 	public Integer getInstallment() {
 		return installment;
 	}
 
-	public void setInstallment(Integer installments) {
+	public CreditInstallment setInstallment(Integer installments) {
 		this.installment = installments;
+		return this;
 	}
 
 	public String getStatus() {
 		return PaymentStatus.toEnum(status).getLabel();
 	}
 
-	public void setStatus(PaymentStatus status) {
+	public CreditInstallment setStatus(PaymentStatus status) {
 		this.status = status.getCode();
+		return this;
 	}
 
 	public CreditCardStatement getStatement() {

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
@@ -31,9 +32,10 @@ public class Address extends BusEntity {
 	@OneToOne
 	@JoinColumn(name = "city_id")
 	private City city;
-	@ManyToMany(mappedBy = "addresses")
+	@ManyToMany
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@JsonIgnoreProperties({ "addresses", "phones", "emails", "preferredContact" })
+	@JoinTable(name = "contact_address", joinColumns = @JoinColumn(name = "address_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
 	private Set<Contact> contacts = new HashSet<>();
 
 	public Address() {
@@ -60,70 +62,79 @@ public class Address extends BusEntity {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public Address setAddress(String address) {
 		this.address = address;
+		return this;
 	}
 
 	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(String number) {
+	public Address setNumber(String number) {
 		this.number = number;
+		return this;
 	}
 
 	public String getComplement() {
 		return complement;
 	}
 
-	public void setComplement(String complement) {
+	public Address setComplement(String complement) {
 		this.complement = complement;
+		return this;
 	}
 
 	public String getDistrict() {
 		return district;
 	}
 
-	public void setDistrict(String district) {
+	public Address setDistrict(String district) {
 		this.district = district;
+		return this;
 	}
 
 	public String getZipCode() {
 		return zipCode;
 	}
 
-	public void setZipCode(String zipCode) {
+	public Address setZipCode(String zipCode) {
 		this.zipCode = zipCode;
+		return this;
 	}
 
 	public Boolean getPreferred() {
 		return preferred;
 	}
 
-	public void setPreferred(Boolean preferred) {
+	public Address setPreferred(Boolean preferred) {
 		this.preferred = preferred;
+		return this;
 	}
 
 	public City getCity() {
 		return city;
 	}
 
-	public void setCity(City city) {
+	public Address setCity(City city) {
 		this.city = city;
+		return this;
 	}
 
 	public Set<Contact> getContacts() {
 		return contacts;
 	}
 
-	public void addContact(Contact contact) {
+	public Address addContact(Contact contact) {
 		this.contacts.add(contact);
+		return this;
 	}
 
-	public void addContacts(Contact... contacts) {
+	public Address addContacts(Contact... contacts) {
 		for (Contact x : contacts) {
 			this.contacts.add(x);
 		}
+		return this;
 	}
 
 	public static Address fromDTO(AddressDTO dto) {
@@ -132,7 +143,8 @@ public class Address extends BusEntity {
 				dto.getZipCode(), city, dto.getPreferred());
 		
 		for (Long contactId : dto.getContactIds()) {
-			address.getContacts().add(new Contact(contactId));
+			Contact contact = new Contact(contactId);
+			address.addContact(contact);
 		}
 		
 		if (dto.getMethod().equals(DTOType.INSERT))

@@ -39,8 +39,9 @@ public class CreditPayment extends Payment {
 		return installments;
 	}
 
-	public void setInstallments(Integer installments) {
+	public CreditPayment setInstallments(Integer installments) {
 		this.installments = installments;
+		return this;
 	}
 	
 	@JsonIgnore
@@ -48,14 +49,16 @@ public class CreditPayment extends Payment {
 		return items;
 	}
 
-	public void addItem(CreditInstallment item) {
+	public CreditPayment addItem(CreditInstallment item) {
 		items.add(item);
+		return this;
 	}
 
-	public void addItems(CreditInstallment... items) {
+	public CreditPayment addItems(CreditInstallment... items) {
 		for (CreditInstallment x : items) {
 			this.items.add(x);
 		}
+		return this;
 	}
 	
 	@JsonIgnore

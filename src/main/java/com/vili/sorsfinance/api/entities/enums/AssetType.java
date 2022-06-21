@@ -41,5 +41,4 @@ public enum AssetType {
 		}
 		throw new EnumValueNotFoundException(label, "label", AssetType.class);
 	}
-
 }

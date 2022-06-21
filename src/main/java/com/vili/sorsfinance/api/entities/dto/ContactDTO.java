@@ -21,15 +21,17 @@ public class ContactDTO extends DTO<Contact> {
 		return ownerId;
 	}
 
-	public void setOwnerId(Long ownerId) {
+	public ContactDTO setOwnerId(Long ownerId) {
 		this.ownerId = ownerId;
+		return this;
 	}
 
 	public Integer getPreferredContact() {
 		return preferredContact;
 	}
 
-	public void setPreferredContact(Integer preferredContact) {
+	public ContactDTO setPreferredContact(Integer preferredContact) {
 		this.preferredContact = preferredContact;
+		return this;
 	}
 }

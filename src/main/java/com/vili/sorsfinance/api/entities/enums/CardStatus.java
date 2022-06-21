@@ -43,5 +43,4 @@ public enum CardStatus {
 		
 		throw new EnumValueNotFoundException(label, "label", CardStatus.class);
 	}
-
 }

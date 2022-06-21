@@ -57,81 +57,92 @@ public class Transaction extends BusEntity {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public Transaction setDate(Date date) {
 		this.date = date;
+		return this;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public Transaction setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 
 	public Double getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(Double discount) {
+	public Transaction setDiscount(Double discount) {
 		this.discount = discount;
+		return this;
 	}
 
 	public String getType() {
 		return TransactionType.toEnum(type).getLabel();
 	}
 
-	public void setType(TransactionType type) {
+	public Transaction setType(TransactionType type) {
 		this.type = type.getCode();
+		return this;
 	}
 
 	public Set<TransactionItem> getItems() {
 		return items;
 	}
 
-	public void addItem(TransactionItem item) {
+	public Transaction addItem(TransactionItem item) {
 		items.add(item);
+		return this;
 	}
 
-	public void addItems(TransactionItem... items) {
+	public Transaction addItems(TransactionItem... items) {
 		for (TransactionItem x : items) {
 			this.items.add(x);
 		}
+		return this;
 	}
 
 	public Person getRecipient() {
 		return recipient;
 	}
 
-	public void setRecipient(Person recipient) {
+	public Transaction setRecipient(Person recipient) {
 		this.recipient = recipient;
+		return this;
 	}
 
 	public Set<Category> getCategories() {
 		return categories;
 	}
 
-	public void addCategory(Category category) {
+	public Transaction addCategory(Category category) {
 		categories.add(category);
+		return this;
 	}
 
-	public void addCategories(Category... categories) {
+	public Transaction addCategories(Category... categories) {
 		for (Category x : categories) {
 			this.categories.add(x);
 		}
+		return this;
 	}
 	
 	public Set<Payment> getPayments() {
 		return payments;
 	}
 	
-	public void addPayment(Payment payment) {
+	public Transaction addPayment(Payment payment) {
 		payments.add(payment);
+		return this;
 	}
 	
-	public void addPayments(Payment... payments) {
+	public Transaction addPayments(Payment... payments) {
 		for (Payment x : payments) {
 			this.payments.add(x);
 		}
+		return this;
 	}
 }
