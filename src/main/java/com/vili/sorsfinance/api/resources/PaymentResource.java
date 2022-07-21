@@ -1,27 +1,16 @@
 package com.vili.sorsfinance.api.resources;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vili.sorsfinance.api.entities.Payment;
-import com.vili.sorsfinance.api.entities.filters.PaymentFilter;
-import com.vili.sorsfinance.api.framework.DTO;
-import com.vili.sorsfinance.api.framework.DefaultResource;
-import com.vili.sorsfinance.api.framework.EntityFilter;
-import com.vili.sorsfinance.api.framework.Request;
-import com.vili.sorsfinance.api.repositories.PaymentRepository;
+import com.vili.sorsfinance.api.domain.Payment;
+import com.vili.sorsfinance.api.domain.dto.PaymentDTO;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IResource;
 
 @RestController
+@EntityRef(Payment.class)
 @RequestMapping(value = "/payments")
-public class PaymentResource extends DefaultResource<Payment, DTO<Payment>> {
+public class PaymentResource implements IResource<PaymentDTO> {
 
-	@Autowired
-	PaymentRepository repo;
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected <U extends EntityFilter<Payment>> U getFilter() {
-		return (U) new PaymentFilter(Request.from(getRequest()), repo);
-	}
 }

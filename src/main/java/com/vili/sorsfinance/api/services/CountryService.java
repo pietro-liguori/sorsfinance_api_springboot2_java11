@@ -2,10 +2,12 @@ package com.vili.sorsfinance.api.services;
 
 import org.springframework.stereotype.Service;
 
-import com.vili.sorsfinance.api.entities.Country;
-import com.vili.sorsfinance.api.framework.DefaultService;
+import com.vili.sorsfinance.api.domain.Country;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IService;
 
 @Service
-public class CountryService extends DefaultService<Country> {
+@EntityRef(Country.class)
+public class CountryService implements IService {
 
 }

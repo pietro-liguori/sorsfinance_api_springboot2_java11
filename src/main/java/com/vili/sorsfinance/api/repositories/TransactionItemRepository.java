@@ -1,9 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.TransactionItem;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.TransactionItem;
-
-public interface TransactionItemRepository extends JpaRepository<TransactionItem, Long> {
+@EntityRef(TransactionItem.class)
+public interface TransactionItemRepository extends IRepository<TransactionItem> {
 
 }

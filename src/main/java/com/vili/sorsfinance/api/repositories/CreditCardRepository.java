@@ -1,9 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.CreditCard;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.CreditCard;
-
-public interface CreditCardRepository extends JpaRepository<CreditCard, Long> {
+@EntityRef(CreditCard.class)
+public interface CreditCardRepository extends IRepository<CreditCard> {
 
 }

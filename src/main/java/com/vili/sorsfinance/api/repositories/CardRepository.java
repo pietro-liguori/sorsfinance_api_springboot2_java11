@@ -1,14 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.Card;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.Card;
+@EntityRef(Card.class)
+public interface CardRepository extends IRepository<Card> {
 
-public interface CardRepository extends JpaRepository<Card, Long> {
-
-	Page<Card> findByType(Integer type, Pageable pageable);
-	Page<Card> findByStatus(Integer status, Pageable pageable);
-	Page<Card> findByTypeAndStatus(Integer status, Integer type, Pageable pageable);
 }

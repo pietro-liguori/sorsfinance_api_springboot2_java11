@@ -1,27 +1,16 @@
 package com.vili.sorsfinance.api.resources;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vili.sorsfinance.api.entities.CreditInstallment;
-import com.vili.sorsfinance.api.entities.filters.CreditInstallmentFilter;
-import com.vili.sorsfinance.api.framework.DTO;
-import com.vili.sorsfinance.api.framework.DefaultResource;
-import com.vili.sorsfinance.api.framework.EntityFilter;
-import com.vili.sorsfinance.api.framework.Request;
-import com.vili.sorsfinance.api.repositories.CreditInstallmentRepository;
+import com.vili.sorsfinance.api.domain.CreditInstallment;
+import com.vili.sorsfinance.framework.DataTransferObject;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IResource;
 
 @RestController
+@EntityRef(CreditInstallment.class)
 @RequestMapping(value = "/creditinstallments")
-public class CreditInstallmentResource extends DefaultResource<CreditInstallment, DTO<CreditInstallment>> {
+public class CreditInstallmentResource implements IResource<DataTransferObject> {
 
-	@Autowired 
-	CreditInstallmentRepository repo;
-
-	@Override
-	@SuppressWarnings("unchecked")
-	protected <U extends EntityFilter<CreditInstallment>> U getFilter() {
-		return (U) new CreditInstallmentFilter(Request.from(getRequest()), repo);
-	}
 }

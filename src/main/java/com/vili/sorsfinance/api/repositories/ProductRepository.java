@@ -1,9 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.Product;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.Product;
-
-public interface ProductRepository extends JpaRepository<Product, Long> {
+@EntityRef(Product.class)
+public interface ProductRepository extends IRepository<Product> {
 
 }

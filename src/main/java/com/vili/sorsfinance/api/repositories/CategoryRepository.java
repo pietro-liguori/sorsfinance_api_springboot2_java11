@@ -2,11 +2,12 @@ package com.vili.sorsfinance.api.repositories;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.Category;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.Category;
-
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+@EntityRef(Category.class)
+public interface CategoryRepository extends IRepository<Category> {
 
 	List<Category> findByNameIgnoreCase(String name);
 }

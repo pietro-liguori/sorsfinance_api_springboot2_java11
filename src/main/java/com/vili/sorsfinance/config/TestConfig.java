@@ -1,8 +1,9 @@
 package com.vili.sorsfinance.config;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,50 +11,50 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.vili.sorsfinance.api.entities.Address;
-import com.vili.sorsfinance.api.entities.BankAccount;
-import com.vili.sorsfinance.api.entities.Branch;
-import com.vili.sorsfinance.api.entities.Card;
-import com.vili.sorsfinance.api.entities.Category;
-import com.vili.sorsfinance.api.entities.City;
-import com.vili.sorsfinance.api.entities.Contact;
-import com.vili.sorsfinance.api.entities.Country;
-import com.vili.sorsfinance.api.entities.CreditCard;
-import com.vili.sorsfinance.api.entities.CreditCardStatement;
-import com.vili.sorsfinance.api.entities.CreditInstallment;
-import com.vili.sorsfinance.api.entities.CreditPayment;
-import com.vili.sorsfinance.api.entities.Email;
-import com.vili.sorsfinance.api.entities.Payment;
-import com.vili.sorsfinance.api.entities.Person;
-import com.vili.sorsfinance.api.entities.Phone;
-import com.vili.sorsfinance.api.entities.Product;
-import com.vili.sorsfinance.api.entities.ServiceProvision;
-import com.vili.sorsfinance.api.entities.State;
-import com.vili.sorsfinance.api.entities.TicketAccount;
-import com.vili.sorsfinance.api.entities.Transaction;
-import com.vili.sorsfinance.api.entities.TransactionItem;
-import com.vili.sorsfinance.api.entities.Wallet;
-import com.vili.sorsfinance.api.entities.enums.AccountStatus;
-import com.vili.sorsfinance.api.entities.enums.AccountType;
-import com.vili.sorsfinance.api.entities.enums.AssetType;
-import com.vili.sorsfinance.api.entities.enums.CardStatus;
-import com.vili.sorsfinance.api.entities.enums.CardType;
-import com.vili.sorsfinance.api.entities.enums.ContactType;
-import com.vili.sorsfinance.api.entities.enums.PaymentStatus;
-import com.vili.sorsfinance.api.entities.enums.PaymentType;
-import com.vili.sorsfinance.api.entities.enums.PeriodUnit;
-import com.vili.sorsfinance.api.entities.enums.PersonProfile;
-import com.vili.sorsfinance.api.entities.enums.PersonType;
-import com.vili.sorsfinance.api.entities.enums.PhoneType;
-import com.vili.sorsfinance.api.entities.enums.TransactionType;
-import com.vili.sorsfinance.api.repositories.BusEntityRepository;
+import com.vili.sorsfinance.api.domain.Address;
+import com.vili.sorsfinance.api.domain.BankAccount;
+import com.vili.sorsfinance.api.domain.Branch;
+import com.vili.sorsfinance.api.domain.Card;
+import com.vili.sorsfinance.api.domain.Category;
+import com.vili.sorsfinance.api.domain.City;
+import com.vili.sorsfinance.api.domain.Contact;
+import com.vili.sorsfinance.api.domain.Country;
+import com.vili.sorsfinance.api.domain.CreditCard;
+import com.vili.sorsfinance.api.domain.CreditCardStatement;
+import com.vili.sorsfinance.api.domain.CreditInstallment;
+import com.vili.sorsfinance.api.domain.CreditPayment;
+import com.vili.sorsfinance.api.domain.Email;
+import com.vili.sorsfinance.api.domain.Payment;
+import com.vili.sorsfinance.api.domain.Person;
+import com.vili.sorsfinance.api.domain.Phone;
+import com.vili.sorsfinance.api.domain.Product;
+import com.vili.sorsfinance.api.domain.ServiceProvision;
+import com.vili.sorsfinance.api.domain.State;
+import com.vili.sorsfinance.api.domain.TicketAccount;
+import com.vili.sorsfinance.api.domain.Transaction;
+import com.vili.sorsfinance.api.domain.TransactionItem;
+import com.vili.sorsfinance.api.domain.Wallet;
+import com.vili.sorsfinance.api.domain.enums.AccountStatus;
+import com.vili.sorsfinance.api.domain.enums.AccountType;
+import com.vili.sorsfinance.api.domain.enums.AssetType;
+import com.vili.sorsfinance.api.domain.enums.CardStatus;
+import com.vili.sorsfinance.api.domain.enums.CardType;
+import com.vili.sorsfinance.api.domain.enums.ContactType;
+import com.vili.sorsfinance.api.domain.enums.PaymentStatus;
+import com.vili.sorsfinance.api.domain.enums.PaymentType;
+import com.vili.sorsfinance.api.domain.enums.PeriodUnit;
+import com.vili.sorsfinance.api.domain.enums.PersonProfile;
+import com.vili.sorsfinance.api.domain.enums.PersonType;
+import com.vili.sorsfinance.api.domain.enums.PhoneType;
+import com.vili.sorsfinance.api.domain.enums.TransactionType;
+import com.vili.sorsfinance.api.repositories.BusinessEntityRepository;
 
 @Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner {
 	
 	@Autowired
-	private BusEntityRepository repository;
+	private BusinessEntityRepository repository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -165,11 +166,11 @@ public class TestConfig implements CommandLineRunner {
 		repository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6, a7));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		Date dt1 = sdf.parse("12/02/2020");
-		Date dt2 = sdf.parse("12/02/2022");
+		Date dt1 = new Date(sdf.parse("12/02/2020").toInstant().toEpochMilli());
+		Date dt2 = new Date(sdf.parse("12/02/2022").toInstant().toEpochMilli());
 
-		Transaction t1 = new Transaction(null, p3, new java.sql.Date(dt1.toInstant().toEpochMilli()), "Compra Casas Bahia", null, TransactionType.DEFAULT);
-		Transaction t2 = new Transaction(null, p4, new java.sql.Date(dt2.toInstant().toEpochMilli()), "Costureira", null, TransactionType.DEFAULT);
+		Transaction t1 = new Transaction(null, p3, dt1, "Compra Casas Bahia", 1200.0, 0.0, TransactionType.DEFAULT);
+		Transaction t2 = new Transaction(null, p4, dt2, "Costureira", 90.0, 0.0, TransactionType.DEFAULT);
 		
 		t1.addCategories(cat6);
 		t2.addCategories(cat7);
@@ -179,28 +180,29 @@ public class TestConfig implements CommandLineRunner {
 		TransactionItem ti2 = new TransactionItem(null, t1, a3, 200.0, 2, 0.0);
 		TransactionItem ti3 = new TransactionItem(null, t2, a2, 30.0, 3, 0.0);
 
-		t1.addItems(ti1, ti2);
-		t2.addItem(ti3);
-
 		repository.saveAll(Arrays.asList(ti1, ti2, ti3));
 		
 		CreditPayment pay1 = new CreditPayment(null, "Pagamento no crédito 3x", PaymentType.CREDIT, 1200.0, PaymentStatus.PAID, acc2, p1, t1, cd1, 3);
 		Payment pay2 = new Payment(null, "Pagamento em dinheiro", PaymentType.CASH, 50.0, PaymentStatus.PAID, acc1, p1, t2, null);
 		Payment pay3 = new Payment(null, "Pagamento no débito", PaymentType.DEBIT, 40.0, PaymentStatus.PAID, acc2, p1, t2, cd1);
-		
-		List<Double> iv1 = pay1.getInstallmentValues(null);
-		
-		t1.addPayment(pay1);
-		t2.addPayment(pay2);
-		t2.addPayment(pay3);
-
 		repository.saveAll(Arrays.asList(pay1, pay2, pay3));
 		
+		List<Double> iv1 = pay1.getInstallmentValues(null);
+		Date clsdt = new Date(sdf.parse("12/02/2022").toInstant().toEpochMilli());
+		Date duedt = new Date(sdf.parse("22/02/2022").toInstant().toEpochMilli());
+		Calendar cal = Calendar.getInstance();
+
 		for (int i = 1; i <= pay1.getInstallments(); i++) {
-			CreditCardStatement st = new CreditCardStatement(null, cd2, "Fatura " + i, new java.sql.Date(1524651548), new java.sql.Date(1524651548), PaymentStatus.NOT_PAID);
+			CreditCardStatement st = new CreditCardStatement(null, cd2, "Fatura " + i, clsdt, duedt, PaymentStatus.NOT_PAID);
 			CreditInstallment pi = new CreditInstallment(null, pay1, st, iv1.get(i - 1), i, PaymentStatus.NOT_PAID);
 			repository.save(st);
 			repository.save(pi);
+			cal.setTime(clsdt);
+			cal.add(Calendar.MONTH, 1);
+			clsdt = new Date(cal.getTime().toInstant().toEpochMilli());
+			cal.setTime(duedt);
+			cal.add(Calendar.MONTH, 1);
+			duedt = new Date(cal.getTime().toInstant().toEpochMilli());
 		}
 	}
 }

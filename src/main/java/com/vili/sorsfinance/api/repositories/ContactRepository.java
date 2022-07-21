@@ -1,14 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.Contact;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.Contact;
+@EntityRef(Contact.class)
+public interface ContactRepository extends IRepository<Contact> {
 
-public interface ContactRepository extends JpaRepository<Contact, Long> {
-
-	Page<Contact> findByPreferredContact(Integer preferredContact, Pageable pageable);
-	Page<Contact> findByOwnerId(Long owner, Pageable pageable);
-	Page<Contact> findByOwnerIdAndPreferredContact(Long owner, Integer preferredContact, Pageable pageable);
 }

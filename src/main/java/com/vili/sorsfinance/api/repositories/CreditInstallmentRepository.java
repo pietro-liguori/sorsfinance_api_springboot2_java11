@@ -1,12 +1,10 @@
 package com.vili.sorsfinance.api.repositories;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vili.sorsfinance.api.domain.CreditInstallment;
+import com.vili.sorsfinance.framework.annotations.EntityRef;
+import com.vili.sorsfinance.framework.interfaces.IRepository;
 
-import com.vili.sorsfinance.api.entities.CreditInstallment;
+@EntityRef(CreditInstallment.class)
+public interface CreditInstallmentRepository extends IRepository<CreditInstallment> {
 
-public interface CreditInstallmentRepository extends JpaRepository<CreditInstallment, Long> {
-
-	Page<CreditInstallment> findByStatus(Integer status, Pageable pageable);
 }
