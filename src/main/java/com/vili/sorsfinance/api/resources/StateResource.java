@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vili.sorsfinance.api.domain.State;
 import com.vili.sorsfinance.api.domain.dto.StateDTO;
 import com.vili.sorsfinance.framework.annotations.EntityRef;
-import com.vili.sorsfinance.framework.interfaces.IResource;
+import com.vili.sorsfinance.framework.controllers.IController;
 
 @RestController
 @EntityRef(State.class)
 @RequestMapping(value = "/states")
-public class StateResource implements IResource<StateDTO> {
+public class StateResource implements IController<StateDTO> {
 
 }

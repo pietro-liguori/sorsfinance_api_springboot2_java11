@@ -1,23 +1,19 @@
 package com.vili.sorsfinance.api.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 
+import com.vili.sorsfinance.api.domain.Branch;
 import com.vili.sorsfinance.api.domain.Person;
 import com.vili.sorsfinance.api.domain.dto.PersonDTO;
 import com.vili.sorsfinance.api.domain.enums.PersonProfile;
 import com.vili.sorsfinance.api.domain.enums.PersonType;
 import com.vili.sorsfinance.api.repositories.PersonRepository;
 import com.vili.sorsfinance.api.validation.constraints.ValidPerson;
-import com.vili.sorsfinance.api.validation.utils.BR;
-import com.vili.sorsfinance.framework.FieldMessage;
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.DTOType;
 
 public class PersonValidator implements ConstraintValidator<ValidPerson, PersonDTO> {
 
@@ -28,61 +24,51 @@ public class PersonValidator implements ConstraintValidator<ValidPerson, PersonD
 
 	@Override
 	public void initialize(ValidPerson ann) {
-		this.locale = ann.locale();
+		this.locale = "BR";
 	}
 
 	@Override
 	public boolean isValid(PersonDTO dto, ConstraintValidatorContext context) {
-		List<FieldMessage> list = new ArrayList<>();
+		Validator validator = new Validator();
 
-		if (dto.getProfile() != null) {
-			try {
+		if (dto.getMethod().equals(DTOType.INSERT)) {
+			validator.notEmpty("name", dto.getName(), true);
+			validator.length("name", dto.getName(), 3, 120, true);
+
+			if (validator.enumValue("profile", dto.getProfile(), PersonProfile.class, true) & validator.enumValue("type", dto.getType(), PersonType.class, true)) {
 				boolean isHolder = PersonProfile.toEnum(dto.getProfile()).equals(PersonProfile.HOLDER);
-
-				if (dto.getSocialId() != null) {
-					Example<Person> ex = Example.of(new Person(null, null, dto.getSocialId(), null, null));
-					List<Person> aux = repo.findAll(ex);
-
-					if (!aux.isEmpty())
-						list.add(new FieldMessage("socialId", "SocialId '" + dto.getSocialId()
-								+ "' belongs to another person(id=" + aux.get(0).getId() + ")"));
-					else {
-						switch (locale) {
-						case "BR":
-							if (dto.getType() != null) {
-								PersonType type = PersonType.toEnum(dto.getType());
-								if (type.equals(PersonType.NATURAL_PERSON)) {
-									if (!BR.isValidCPF(dto.getSocialId()))
-										list.add(new FieldMessage("socialId",
-												"Invalid brazilian natural person socialId (CPF)"));
-								}
-
-								if (type.equals(PersonType.LEGAL_PERSON)) {
-									if (!BR.isValidCNPJ(dto.getSocialId()))
-										list.add(new FieldMessage("socialId",
-												"Invalid brazilian legal person socialId (CNPJ)"));
-								}
-							}
+				
+				if (validator.enumValue("type", dto.getType(), PersonType.class, true)) {
+					PersonType type = PersonType.toEnum(dto.getType());
+					
+					if (validator.socialId(dto.getSocialId(), type, getLocale(), isHolder)) {
+						Person probe = new Person();
+						probe.setType(type);
+						probe.setSocialId(dto.getSocialId());
+						validator.unique("socialId", Example.of(probe), true);
+					}
+					
+					if (type.equals(PersonType.LEGAL_PERSON)) {
+						validator.entityId("branchId", dto.getBranchId(), Branch.class, true);
+					}
+					
+					if (isHolder) {
+						switch (type) {
+						case LEGAL_PERSON:
+							validator.notEmpty("foundationDate", dto.getFoundationDate(), true);
 							break;
-						default:
+						case NATURAL_PERSON:
+							validator.notEmpty("birthDate", dto.getBirthDate(), true);
 							break;
 						}
 					}
-				} else {
-					if (isHolder)
-						list.add(new FieldMessage("socialId", "Holder's socialId must not be null"));
 				}
-			} catch (EnumValueNotFoundException e) {
 			}
+		} else {
+			
 		}
 
-		for (FieldMessage e : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getField())
-					.addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return validator.validate(context);
 	}
 
 	public String getLocale() {

@@ -13,13 +13,13 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.vili.sorsfinance.framework.interfaces.IEntity;
+import com.vili.sorsfinance.framework.IEntity;
 
 @Entity
 @Table(name = "entities")
 @Inheritance(strategy = InheritanceType.JOINED)
 @JsonPropertyOrder({ "id", "domainClass", "createdAt", "updatedAt", "active" })
-public class BusinessEntity implements IEntity {
+public abstract class BusinessEntity implements IEntity {
 
 	private static final long serialVersionUID = 1L;
 	

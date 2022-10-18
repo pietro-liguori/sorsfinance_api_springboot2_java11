@@ -8,19 +8,18 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
 import com.vili.sorsfinance.api.validation.ContactValidator;
 
 @Documented
-@NotNull(message = "Must not be null")
 @Constraint(validatedBy = ContactValidator.class)
-@Target({ ElementType.TYPE })
+@Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidContact {
+
 	String message() default "Contact validation error";
 
-	Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

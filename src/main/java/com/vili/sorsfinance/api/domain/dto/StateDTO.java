@@ -1,22 +1,15 @@
 package com.vili.sorsfinance.api.domain.dto;
 
-import javax.validation.constraints.Size;
-
 import com.vili.sorsfinance.api.domain.Country;
 import com.vili.sorsfinance.api.domain.State;
-import com.vili.sorsfinance.api.validation.constraints.ValidCountryId;
 import com.vili.sorsfinance.api.validation.constraints.ValidState;
-import com.vili.sorsfinance.api.validation.constraints.ValidStateAcronym;
 import com.vili.sorsfinance.framework.DataTransferObject;
 
+@ValidState
 public class StateDTO extends DataTransferObject {
 
-	@ValidState
 	private String name;
-	@ValidStateAcronym
-	@Size(min = 2, max = 2, message = "Must have 2 characters")
 	private String acronym;
-	@ValidCountryId
 	private Long countryId;
 	
 	public StateDTO() {
@@ -27,27 +20,24 @@ public class StateDTO extends DataTransferObject {
 		return name;
 	}
 
-	public StateDTO setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	public String getAcronym() {
 		return acronym;
 	}
 
-	public StateDTO setAcronym(String acronym) {
+	public void setAcronym(String acronym) {
 		this.acronym = acronym.toUpperCase();
-		return this;
 	}
 
 	public Long getCountryId() {
 		return countryId;
 	}
 
-	public StateDTO setCountryId(Long stateId) {
+	public void setCountryId(Long stateId) {
 		this.countryId = stateId;
-		return this;
 	}
 	
 	@Override

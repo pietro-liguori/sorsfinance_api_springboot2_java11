@@ -8,22 +8,18 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
 import com.vili.sorsfinance.api.validation.PersonValidator;
 
 @Documented
-@NotNull(message = "Must not be null")
 @Constraint(validatedBy = PersonValidator.class)
-@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE_USE })
+@Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPerson {
 
-	String message() default "Social id validation error";
+	String message() default "Person validation error";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-    
-    String locale() default "BR";
 }

@@ -1,6 +1,6 @@
 package com.vili.sorsfinance.api.domain.enums;
 
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
 
 public enum PaymentType {
 
@@ -15,7 +15,8 @@ public enum PaymentType {
 	DEPOSIT(9, "Depósito"),
 	DOC(10, "DOC"),
 	TED(11, "TED"),
-	PIX(12, "PIX");
+	PIX(12, "PIX"),
+	VOUCHER(13, "Voucher");
 	
 	private Integer code;
 	private String label;

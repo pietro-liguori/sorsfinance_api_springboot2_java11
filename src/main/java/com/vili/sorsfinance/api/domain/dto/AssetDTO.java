@@ -1,34 +1,24 @@
 package com.vili.sorsfinance.api.domain.dto;
 
-import java.util.Date;
+import java.util.List;
 import java.util.Set;
-
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotEmpty;
 
 import com.vili.sorsfinance.api.domain.Asset;
 import com.vili.sorsfinance.api.domain.Category;
 import com.vili.sorsfinance.api.domain.Product;
 import com.vili.sorsfinance.api.domain.ServiceProvision;
 import com.vili.sorsfinance.api.domain.enums.AssetType;
-import com.vili.sorsfinance.api.validation.constraints.UniqueAsset;
-import com.vili.sorsfinance.api.validation.constraints.ValidCategoryId;
-import com.vili.sorsfinance.api.validation.constraints.ValidEnumValue;
+import com.vili.sorsfinance.api.validation.constraints.ValidAsset;
 import com.vili.sorsfinance.framework.DataTransferObject;
 
+@ValidAsset
 public class AssetDTO extends DataTransferObject {
 
-	@UniqueAsset
 	private String name;
-	@ValidEnumValue(target = AssetType.class)
 	private Integer type;
-	@NotEmpty(message = "Must not be null or empty")
-	private Set<@ValidCategoryId Long> categoryIds;
-	@Future
-	private Date expirationDate;
+	private Set<Long> categoryIds;
 	private String brand;
-	@Future
-	private Date deliveryDate;
+	private String description;
 
 	public AssetDTO() {
 		super();
@@ -38,35 +28,24 @@ public class AssetDTO extends DataTransferObject {
 		return name;
 	}
 
-	public AssetDTO setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	public Integer getType() {
 		return type;
 	}
 
-	public AssetDTO setType(Integer type) {
+	public void setType(Integer type) {
 		this.type = type;
-		return this;
 	}
 
-	public Set<Long> getCategoryIds() {
-		return categoryIds;
+	public List<Long> getCategoryIds() {
+		return categoryIds.stream().toList();
 	}
 
-	public AssetDTO setCategoryIds(Set<Long> categoryIds) {
+	public void setCategoryIds(Set<Long> categoryIds) {
 		this.categoryIds = categoryIds;
-		return this;
-	}
-
-	public Date getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
 	}
 
 	public String getBrand() {
@@ -76,21 +55,21 @@ public class AssetDTO extends DataTransferObject {
 	public void setBrand(String brand) {
 		this.brand = brand;
 	}
-
-	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
 	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public Asset toEntity() {
 		AssetType type = AssetType.toEnum(getType());
 
 		if (AssetType.PRODUCT.equals(type)) {
-			Product prod = new Product(getId(), getName(), AssetType.toEnum(getType()), getExpirationDate(), getBrand());
+			Product prod = new Product(getId(), getName(), getBrand());
 
 			for (Long categoryId : getCategoryIds()) {
 				prod.addCategory(new Category(categoryId));
@@ -100,7 +79,7 @@ public class AssetDTO extends DataTransferObject {
 		}
 		
 		if (AssetType.SERVICE_PROVISION.equals(type)) {
-			ServiceProvision prod = new ServiceProvision(getId(), getName(), AssetType.toEnum(getType()), getDeliveryDate());
+			ServiceProvision prod = new ServiceProvision(getId(), getName(), getDescription());
 
 			for (Long categoryId : getCategoryIds()) {
 				prod.addCategory(new Category(categoryId));

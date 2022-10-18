@@ -2,42 +2,34 @@ package com.vili.sorsfinance.api.domain.dto;
 
 import java.util.Date;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.CreditCardNumber;
-import org.hibernate.validator.constraints.Length;
-
 import com.vili.sorsfinance.api.domain.Account;
+import com.vili.sorsfinance.api.domain.BankCard;
 import com.vili.sorsfinance.api.domain.Card;
+import com.vili.sorsfinance.api.domain.CreditCard;
+import com.vili.sorsfinance.api.domain.Voucher;
 import com.vili.sorsfinance.api.domain.enums.CardStatus;
 import com.vili.sorsfinance.api.domain.enums.CardType;
+import com.vili.sorsfinance.api.domain.enums.PeriodUnit;
 import com.vili.sorsfinance.api.validation.constraints.ValidCard;
-import com.vili.sorsfinance.api.validation.constraints.ValidEnumValue;
 import com.vili.sorsfinance.framework.DataTransferObject;
 
 @ValidCard
 public class CardDTO extends DataTransferObject {
 
-	@NotNull(message = "Must not be null")
 	private Long accountId;
-	@NotBlank(message = "Must not be null or empty")
-	@Length(min = 5, max = 60, message = "Must be between 5 and 60 characters")
 	private String name;
-	@CreditCardNumber(message = "Invalid card number")
 	private String number;
-	@Future(message = "Cannot insert a expirated card")
-	private Date expiration;
-	@ValidEnumValue(target = CardType.class)
 	private Integer type;
-	@ValidEnumValue(target = CardStatus.class)
 	private Integer status;
+	private Date expiration;
 	private Integer closingDay;
 	private Double interest;
 	private Integer interestUnit;
 	private Integer gracePeriod;
 	private Integer gracePeriodUnit;
+	private String printedName;
+	private Double balance;
+	private Double limit;
 
 	public CardDTO() {
 		super();
@@ -47,106 +39,131 @@ public class CardDTO extends DataTransferObject {
 		return accountId;
 	}
 
-	public CardDTO setAccountId(Long accountId) {
+	public void setAccountId(Long accountId) {
 		this.accountId = accountId;
-		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public CardDTO setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	public Integer getType() {
 		return type;
 	}
 
-	public CardDTO setType(Integer type) {
+	public void setType(Integer type) {
 		this.type = type;
-		return this;
 	}
 
 	public Integer getStatus() {
 		return status;
 	}
 
-	public CardDTO setStatus(Integer status) {
+	public void setStatus(Integer status) {
 		this.status = status;
-		return this;
 	}
 
 	public String getNumber() {
 		return number;
 	}
 
-	public CardDTO setNumber(String number) {
+	public void setNumber(String number) {
 		this.number = number;
-		return this;
 	}
 
 	public Double getInterest() {
 		return interest;
 	}
 
-	public CardDTO setInterest(Double interest) {
+	public void setInterest(Double interest) {
 		this.interest = interest;
-		return this;
 	}
 
 	public Integer getInterestUnit() {
 		return interestUnit;
 	}
 
-	public CardDTO setInterestUnit(Integer interestUnit) {
+	public void setInterestUnit(Integer interestUnit) {
 		this.interestUnit = interestUnit;
-		return this;
 	}
 
 	public Integer getGracePeriod() {
 		return gracePeriod;
 	}
 
-	public CardDTO setGracePeriod(Integer gracePeriod) {
+	public void setGracePeriod(Integer gracePeriod) {
 		this.gracePeriod = gracePeriod;
-		return this;
 	}
 
 	public Integer getGracePeriodUnit() {
 		return gracePeriodUnit;
 	}
 
-	public CardDTO setGracePeriodUnit(Integer gracePeriodUnit) {
+	public void setGracePeriodUnit(Integer gracePeriodUnit) {
 		this.gracePeriodUnit = gracePeriodUnit;
-		return this;
 	}
 
 	public Integer getClosingDay() {
 		return closingDay;
 	}
 
-	public CardDTO setClosingDay(Integer closingDay) {
+	public void setClosingDay(Integer closingDay) {
 		this.closingDay = closingDay;
-		return this;
 	}
 
 	public Date getExpiration() {
 		return expiration;
 	}
 
-	public CardDTO setExpiration(Date expiration) {
+	public void setExpiration(Date expiration) {
 		this.expiration = expiration;
-		return this;
 	}
 	
+	public String getPrintedName() {
+		return printedName;
+	}
+
+	public void setPrintedName(String printedName) {
+		this.printedName = printedName;
+	}
+
+	public Double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public Double getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Double limit) {
+		this.limit = limit;
+	}
+
 	@Override
 	public Card toEntity() {
 		Account acc = new Account(getAccountId());
-		Card card = new Card(getId(), getName(), acc, getNumber(), getExpiration(),
-				CardType.toEnum(getType()), CardStatus.toEnum(getStatus()));
-		return card;
+		CardType type = CardType.toEnum(getType());
+		
+		if (Card.CREDIT_CARD_TYPES.contains(type)) {
+			return new CreditCard(getId(), getName(), acc, getPrintedName(), getNumber(), getExpiration(), getClosingDay(), getGracePeriod(), PeriodUnit.toEnum(getGracePeriodUnit()), getInterest(), PeriodUnit.toEnum(getInterestUnit()), getLimit(), CardType.toEnum(getType()), CardStatus.toEnum(getStatus()));
+		}
+		
+		if (Card.BANK_CARD_TYPES.contains(type)) {
+			return new BankCard(getId(), getName(), acc, getPrintedName(), getNumber(), getExpiration(), CardType.toEnum(getType()), CardStatus.toEnum(getStatus()));
+		}
+
+		if (Card.VOUCHER_TYPES.contains(type)) {
+			return new Voucher(getId(), getName(), acc, getNumber(), getExpiration(), getBalance(), CardType.toEnum(getType()), CardStatus.toEnum(getStatus()));
+		}
+		
+		return null;
 	}
 }

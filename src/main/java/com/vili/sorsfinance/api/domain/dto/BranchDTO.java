@@ -4,9 +4,9 @@ import com.vili.sorsfinance.api.domain.Branch;
 import com.vili.sorsfinance.api.validation.constraints.ValidBranch;
 import com.vili.sorsfinance.framework.DataTransferObject;
 
+@ValidBranch
 public class BranchDTO extends DataTransferObject {
 
-	@ValidBranch
 	private String name;
 
 	public BranchDTO() {
@@ -17,9 +17,8 @@ public class BranchDTO extends DataTransferObject {
 		return name;
 	}
 
-	public BranchDTO setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	@Override

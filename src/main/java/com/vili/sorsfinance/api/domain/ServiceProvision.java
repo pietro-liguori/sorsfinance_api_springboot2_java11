@@ -1,7 +1,5 @@
 package com.vili.sorsfinance.api.domain;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,22 +17,28 @@ public class ServiceProvision extends Asset {
 	private static final long serialVersionUID = 1L;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Date deliveryDate;
+	private String description;
 	
 	public ServiceProvision() {
 		super();
+		super.setType(AssetType.SERVICE_PROVISION);
+	}
+	
+	public ServiceProvision(Long id) {
+		super(id, ServiceProvision.class);
+		super.setType(AssetType.SERVICE_PROVISION);
 	}
 
-	public ServiceProvision(Long id, String description, AssetType type, Date deliveryDate) {
-		super(id, description, type, ServiceProvision.class);
-		this.deliveryDate = deliveryDate;
+	public ServiceProvision(Long id, String name, String description) {
+		super(id, name, AssetType.SERVICE_PROVISION, ServiceProvision.class);
+		this.description = description;
 	}
 
-	public Date getDeliveryDate() {
-		return deliveryDate;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

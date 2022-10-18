@@ -1,6 +1,7 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import com.vili.sorsfinance.api.repositories.CategoryRepository;
 import com.vili.sorsfinance.api.services.CategoryService;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(CategoryService.class)
@@ -26,10 +28,12 @@ public class Category extends BusinessEntity {
 	private String name;
 	
 	@ManyToMany(mappedBy = "categories")
+	@NoFilter
 	@JsonIgnore
 	private Set<Asset> assets = new HashSet<>();
 	
 	@ManyToMany(mappedBy = "categories")
+	@NoFilter
 	@JsonIgnore
 	private Set<Transaction> transactions = new HashSet<>();
 
@@ -54,8 +58,8 @@ public class Category extends BusinessEntity {
 		this.name = name;
 	}
 
-	public Set<Asset> getAssets() {
-		return assets;
+	public List<Asset> getAssets() {
+		return assets.stream().toList();
 	}
 
 	public void addAsset(Asset asset) {
@@ -68,8 +72,8 @@ public class Category extends BusinessEntity {
 		}
 	}
 
-	public Set<Transaction> getTransactions() {
-		return transactions;
+	public List<Transaction> getTransactions() {
+		return transactions.stream().toList();
 	}
 
 	public void addTransaction(Transaction transaction) {

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.vili.sorsfinance.framework.exceptions.InvalidRequestParamException;
+import com.vili.sorsfinance.framework.exceptions.custom.CastingException;
 
 public class CustomCaster {
 
@@ -57,7 +57,7 @@ public class CustomCaster {
 				return value;
 			}
 		} catch (Exception e) {
-			throw new InvalidRequestParamException("Cannot parse '" + value + "' to " + dataType.getSimpleName());
+			throw new CastingException("Cannot parse '" + value + "' to " + dataType.getSimpleName());
 		}
 
 		return null;

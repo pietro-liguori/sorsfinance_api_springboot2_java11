@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vili.sorsfinance.api.domain.Category;
 import com.vili.sorsfinance.api.domain.dto.CategoryDTO;
 import com.vili.sorsfinance.framework.annotations.EntityRef;
-import com.vili.sorsfinance.framework.interfaces.IResource;
+import com.vili.sorsfinance.framework.controllers.IController;
 
 @RestController
 @EntityRef(Category.class)
 @RequestMapping(value = "/categories")
-public class CategoryResource implements IResource<CategoryDTO> {
+public class CategoryResource implements IController<CategoryDTO> {
 
 }

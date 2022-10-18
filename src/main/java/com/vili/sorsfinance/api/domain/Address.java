@@ -1,27 +1,24 @@
 package com.vili.sorsfinance.api.domain;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.domain.enums.AddressType;
 import com.vili.sorsfinance.api.repositories.AddressRepository;
 import com.vili.sorsfinance.api.services.AddressService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(AddressService.class)
 @RepositoryRef(AddressRepository.class)
-@JsonPropertyOrder({ "id", "address", "number", "complement", "district", "zipCode", "city", "preferred", "contact" })
+@JsonPropertyOrder({ "id", "type", "address", "number", "complement", "district", "zipCode", "city", "preferred", "contact" })
 public class Address extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -44,18 +41,22 @@ public class Address extends BusinessEntity {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean preferred;
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Integer type;
+
 	@OneToOne
 	@JoinColumn(name = "city_id")
 	@FilterSetting(nesting = { "id" })
+	@FilterSetting(alias = "state", nesting = { "state", "id" })
+	@FilterSetting(alias = "country", nesting = { "state", "country", "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private City city;
 	
-	@ManyToMany
-	@JoinTable(name = "contact_address", joinColumns = @JoinColumn(name = "address_id"), inverseJoinColumns = @JoinColumn(name = "contact_id"))
-	@FilterSetting(alias = "owner", nesting = { "owner", "id" })
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	@JsonIgnoreProperties({ "addresses", "phones", "emails", "preferredContact" })
-	private Set<Contact> contacts = new HashSet<>();
+	@ManyToOne
+	@FilterSetting(alias = "owner", nesting = { "id" })
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@JsonIgnoreProperties({ "addresses", "phones", "emails" })
+	private Contact contact;
 
 	public Address() {
 		super();
@@ -66,7 +67,7 @@ public class Address extends BusinessEntity {
 	}
 	
 	public Address(Long id, String address, String number, String complement, String district, String zipCode,
-			City city, Boolean preferred) {
+			City city, Boolean preferred, AddressType type) {
 		super(id, Address.class);
 		this.address = address;
 		this.number = number;
@@ -75,6 +76,7 @@ public class Address extends BusinessEntity {
 		this.zipCode = zipCode;
 		this.city = city;
 		this.preferred = preferred;
+		this.type = type == null ? null : type.getCode();
 	}
 
 	public String getAddress() {
@@ -125,6 +127,14 @@ public class Address extends BusinessEntity {
 		this.preferred = preferred;
 	}
 
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(AddressType type) {
+		this.type = type == null ? null : type.getCode();
+	}
+
 	public City getCity() {
 		return city;
 	}
@@ -133,17 +143,11 @@ public class Address extends BusinessEntity {
 		this.city = city;
 	}
 
-	public Set<Contact> getContacts() {
-		return contacts;
+	public Contact getContact() {
+		return contact;
 	}
 
-	public void addContact(Contact contact) {
-		this.contacts.add(contact);
-	}
-
-	public void addContacts(Contact... contacts) {
-		for (Contact x : contacts) {
-			this.contacts.add(x);
-		}
+	public void setContact(Contact contact) {
+		this.contact = contact;
 	}
 }

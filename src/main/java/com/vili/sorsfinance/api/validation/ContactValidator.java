@@ -1,9 +1,5 @@
 package com.vili.sorsfinance.api.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -11,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vili.sorsfinance.api.domain.Person;
 import com.vili.sorsfinance.api.domain.dto.ContactDTO;
+import com.vili.sorsfinance.api.domain.enums.ContactType;
 import com.vili.sorsfinance.api.repositories.PersonRepository;
 import com.vili.sorsfinance.api.validation.constraints.ValidContact;
-import com.vili.sorsfinance.framework.FieldMessage;
-import com.vili.sorsfinance.framework.enums.DTOType;
+import com.vili.sorsfinance.framework.DTOType;
+import com.vili.sorsfinance.framework.exceptions.FieldMessage;
 
 public class ContactValidator implements ConstraintValidator<ValidContact, ContactDTO> {
 
@@ -27,32 +24,21 @@ public class ContactValidator implements ConstraintValidator<ValidContact, Conta
 
 	@Override
 	public boolean isValid(ContactDTO dto, ConstraintValidatorContext context) {
-		List<FieldMessage> list = new ArrayList<>();
+		Validator validator = new Validator();
 
-		if (dto.getMethod() == DTOType.INSERT) {
-			if (dto.getOwnerId() == null)
-				list.add(new FieldMessage("ownerId", "Must not be null"));
-			else {
-				Optional<Person> aux = personRepo.findById(dto.getOwnerId());
-
-				if (aux.isEmpty())
-					list.add(new FieldMessage("ownerId", "Resource not found: " + dto.getOwnerId()));
-				else {
-					if (aux.get().getContact() != null)
-						list.add(new FieldMessage("ownerId",
-								"Referenced owner already has a contact. Update owner's contact data instead"));
-				}
+		if (dto.getMethod().equals(DTOType.INSERT)) {
+			Person owner = (Person) validator.entityId("ownerId", dto.getOwnerId(), Person.class, true);
+			
+			if (owner != null) {				
+				if (owner.getContact() != null)
+					validator.addError(new FieldMessage("ownerId", "Referenced owner [id=" + dto.getOwnerId() + "] already has a contact [id=" + owner.getContact().getId() + "]. Update owner's contact data instead"));
 			}
-		} else if (dto.getMethod() == DTOType.UPDATE) {
-			// TODO all contact types update validation
+			
+			validator.enumValue("preferredContact", dto.getPreferredContact(), ContactType.class, true);
+		} else {
+			
 		}
 
-		for (FieldMessage e : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getField())
-					.addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return validator.validate(context);
 	}
 }

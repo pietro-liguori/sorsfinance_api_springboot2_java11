@@ -1,7 +1,5 @@
 package com.vili.sorsfinance.api.domain;
 
-import java.util.Date;
-
 import javax.persistence.Entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,27 +17,21 @@ public class Product extends Asset {
 	private static final long serialVersionUID = 1L;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Date expirationDate;
-	
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String brand;
-
+	
 	public Product() {
 		super();
+		super.setType(AssetType.PRODUCT);
 	}
 
-	public Product(Long id, String name, AssetType type, Date expirationDate, String brand) {
-		super(id, name, type, Product.class);
-		this.expirationDate = expirationDate;
+	public Product(Long id) {
+		super(id, Product.class);
+		super.setType(AssetType.PRODUCT);
+	}
+
+	public Product(Long id, String name, String brand) {
+		super(id, name, AssetType.PRODUCT, Product.class);
 		this.brand = brand;
-	}
-
-	public Date getExpirationDate() {
-		return expirationDate;
-	}
-
-	public void setExpirationDate(Date expirationDate) {
-		this.expirationDate = expirationDate;
 	}
 
 	public String getBrand() {

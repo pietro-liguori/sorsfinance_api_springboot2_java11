@@ -16,9 +16,9 @@ import com.vili.sorsfinance.api.domain.enums.PaymentStatus;
 import com.vili.sorsfinance.api.domain.enums.PaymentType;
 import com.vili.sorsfinance.api.repositories.PaymentRepository;
 import com.vili.sorsfinance.api.services.PaymentService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(value = PaymentService.class)
@@ -29,7 +29,7 @@ public class Payment extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final List<PaymentType> INSTALLMENT_PAYMENT_TYPES = Arrays.asList(PaymentType.CREDIT, PaymentType.BANK_SLIP);
+	public static final List<PaymentType> INSTALLMENT_PAYMENT_TYPES = Arrays.asList(PaymentType.CREDIT, PaymentType.BANK_SLIP, PaymentType.CHECK);
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String description;
@@ -76,26 +76,34 @@ public class Payment extends BusinessEntity {
 		super();
 	}
 
+	public Payment(Long id) {
+		super(id, Payment.class);
+	}
+
 	public Payment(Long id, String description, PaymentType type, Double value, PaymentStatus status, Account account, Person responsible,
 			Transaction transaction, Card card) {
 		super(id, Payment.class);
 		this.description = description;
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 		this.value = value;
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 		this.account = account;
 		this.responsible = responsible;
 		this.transaction = transaction;
 		this.card = card;
 	}
 
-	public Payment(Long id, String description, PaymentType type, Double value, PaymentStatus status, Account account, Person responsible,
+	protected Payment(Long id, Class<?> domain) {
+		super(id, domain);
+	}
+
+	protected Payment(Long id, String description, PaymentType type, Double value, PaymentStatus status, Account account, Person responsible,
 			Transaction transaction, Card card, Class<?> domain) {
 		super(id, domain);
 		this.description = description;
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 		this.value = value;
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 		this.account = account;
 		this.responsible = responsible;
 		this.transaction = transaction;
@@ -110,12 +118,12 @@ public class Payment extends BusinessEntity {
 		this.description = description;
 	}
 
-	public String getType() {
-		return PaymentType.toEnum(type).getLabel();
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(PaymentType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
 	public Double getValue() {
@@ -126,12 +134,12 @@ public class Payment extends BusinessEntity {
 		this.value = value;
 	}
 
-	public String getStatus() {
-		return PaymentStatus.toEnum(status).getLabel();
+	public Integer getStatus() {
+		return status;
 	}
 
 	public void setStatus(PaymentStatus status) {
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 	}
 
 	public Account getAccount() {

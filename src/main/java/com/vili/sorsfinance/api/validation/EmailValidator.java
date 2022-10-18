@@ -1,39 +1,31 @@
 package com.vili.sorsfinance.api.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.vili.sorsfinance.api.repositories.EmailRepository;
+import com.vili.sorsfinance.api.domain.Contact;
+import com.vili.sorsfinance.api.domain.dto.EmailDTO;
 import com.vili.sorsfinance.api.validation.constraints.ValidEmail;
+import com.vili.sorsfinance.framework.DTOType;
 
-public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
-
-	@Autowired
-	EmailRepository repo;
+public class EmailValidator implements ConstraintValidator<ValidEmail, EmailDTO> {
 
 	@Override
 	public void initialize(ValidEmail ann) {
 	}
 
 	@Override
-	public boolean isValid(String email, ConstraintValidatorContext context) {
-		List<String> list = new ArrayList<>();
-
-		if (email != null) {
-			if (!repo.findByEmailIgnoreCase(email).isEmpty())
-				list.add("Email '" + email + "' already in use");
+	public boolean isValid(EmailDTO dto, ConstraintValidatorContext context) {
+		Validator validator = new Validator();
+		
+		if (dto.getMethod().equals(DTOType.INSERT)) {
+			validator.email(dto.getName(), true);
+			validator.notEmpty("preferred", dto.getPreferred(), true);
+			validator.entityId("contactId", dto.getContactId(), Contact.class, true);
+		} else {
+			
 		}
 
-		for (String msg : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return validator.validate(context);
 	}
 }

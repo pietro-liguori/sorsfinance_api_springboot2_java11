@@ -1,6 +1,6 @@
 package com.vili.sorsfinance.api.domain.enums;
 
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
 
 public enum PersonType {
 

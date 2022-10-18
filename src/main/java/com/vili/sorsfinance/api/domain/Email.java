@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.repositories.EmailRepository;
 import com.vili.sorsfinance.api.services.EmailService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(value = EmailService.class)
@@ -21,7 +21,7 @@ public class Email extends BusinessEntity {
 	private static final long serialVersionUID = 1L;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private String email;
+	private String name;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean preferred;
@@ -29,7 +29,7 @@ public class Email extends BusinessEntity {
 	@ManyToOne
 	@FilterSetting(alias = "owner", nesting = { "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonIgnoreProperties({ "addresses", "phones", "emails", "preferredContact" })
+	@JsonIgnoreProperties({ "addresses", "phones", "emails" })
 	private Contact contact;
 
 	public Email() {
@@ -40,18 +40,18 @@ public class Email extends BusinessEntity {
 		super(id, Email.class);
 	}
 
-	public Email(Long id, String email, Boolean preferred) {
+	public Email(Long id, String name, Boolean preferred) {
 		super(id, Email.class);
-		this.email = email;
+		this.name = name;
 		this.preferred = preferred;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getName() {
+		return name;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Boolean getPreferred() {

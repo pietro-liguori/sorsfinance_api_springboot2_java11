@@ -1,7 +1,6 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -17,31 +16,31 @@ import com.vili.sorsfinance.api.domain.enums.CardStatus;
 import com.vili.sorsfinance.api.domain.enums.CardType;
 import com.vili.sorsfinance.api.repositories.CardRepository;
 import com.vili.sorsfinance.api.services.CardService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(CardService.class)
 @RepositoryRef(CardRepository.class)
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonPropertyOrder({ "id", "name", "number", "expiration", "type", "closingDay", "gracePeriod", "gracePeriodUnit",
-		"interest", "interestUnit", "status", "account" })
+@JsonPropertyOrder({ "id", "name", "printedName", "number", "expiration", "type", "closingDay", "gracePeriod", "gracePeriodUnit",
+		"interest", "interestUnit", "balance", "threshold", "status", "account" })
 public class Card extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
 	public static final List<CardType> CREDIT_CARD_TYPES = Arrays.asList(CardType.CREDIT, CardType.MULTIPLE, CardType.ONLINE);
 
+	public static final List<CardType> BANK_CARD_TYPES = Arrays.asList(CardType.CREDIT, CardType.DEBIT, CardType.MULTIPLE, CardType.ONLINE);
+
+	public static final List<CardType> VOUCHER_TYPES = Arrays.asList(CardType.FOOD_TICKET, CardType.MEAL_TICKET, CardType.FUEL_TICKET, CardType.TRANSPORT_TICKET);
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String name;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String number;
-	
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Date expiration;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer type;
@@ -53,7 +52,7 @@ public class Card extends BusinessEntity {
 	@JoinColumn(name = "account_id")
 	@FilterSetting(nesting = { "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonIgnoreProperties({ "cards" })
+	@JsonIgnoreProperties({ "cards", "vouchers" })
 	private Account account;
 
 	public Card() {
@@ -64,24 +63,15 @@ public class Card extends BusinessEntity {
 		super(id, Card.class);
 	}
 
-	public Card(Long id, String name, Account account, String number, Date expiration, CardType type,
-			CardStatus status) {
-		super(id, Card.class);
-		this.name = name;
-		this.account = account;
-		this.number = number;
-		this.expiration = expiration;
-		this.type = type.getCode();
-		this.status = status.getCode();
+	protected Card(Long id, Class<?> domain) {
+		super(id, domain);
 	}
 
-	public Card(Long id, String name, Account account, String number, Date expiration, CardType type, CardStatus status,
-			Class<?> domain) {
+	protected Card(Long id, String name, Account account, String number, CardType type, CardStatus status, Class<?> domain) {
 		super(id, domain);
 		this.name = name;
 		this.account = account;
 		this.number = number;
-		this.expiration = expiration;
 		this.type = type == null ? null :type.getCode();
 		this.status = status == null ? null : status.getCode();
 	}
@@ -102,36 +92,20 @@ public class Card extends BusinessEntity {
 		this.number = number;
 	}
 
-	public Date getExpiration() {
-		return expiration;
-	}
-
-	public void setExpiration(Date expiration) {
-		this.expiration = expiration;
-	}
-
-	public String getType() {
-		try {
-			return CardType.toEnum(type).getLabel();
-		} catch (EnumValueNotFoundException e) {
-			return null;
-		}
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(CardType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
-	public String getStatus() {
-		try {
-			return CardStatus.toEnum(status).getLabel();
-		} catch (EnumValueNotFoundException e) {
-			return null;
-		}
+	public Integer getStatus() {
+		return status;
 	}
 
 	public void setStatus(CardStatus status) {
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 	}
 
 	public Account getAccount() {

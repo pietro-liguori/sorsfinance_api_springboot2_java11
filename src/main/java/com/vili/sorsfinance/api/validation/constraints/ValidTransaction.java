@@ -8,14 +8,12 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
 import com.vili.sorsfinance.api.validation.TransactionValidator;
 
 @Documented
-@NotNull(message = "Must not be null")
 @Constraint(validatedBy = TransactionValidator.class)
-@Target({ ElementType.TYPE, ElementType.TYPE_USE })
+@Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidTransaction {
 	String message() default "Transaction validation error";

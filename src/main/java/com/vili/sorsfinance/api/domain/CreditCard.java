@@ -16,7 +16,7 @@ import com.vili.sorsfinance.framework.annotations.ServiceRef;
 @Entity
 @ServiceRef(CreditCardService.class)
 @RepositoryRef(CreditCardRepository.class)
-public class CreditCard extends Card {
+public class CreditCard extends BankCard {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,27 +27,34 @@ public class CreditCard extends Card {
 	private Integer gracePeriod;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Integer gracePeriodUnit = PeriodUnit.DAY.getCode();
+	private Integer gracePeriodUnit;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Double interest;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Integer interestUnit = PeriodUnit.MONTH.getCode();
+	private Integer interestUnit;
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Double threshold;
 
 	public CreditCard() {
 		super();
 	}
 
-	public CreditCard(Long id, String name, Account account, String number, Date expiration, CardType type,
-			CardStatus status, Integer closingDay, Integer gracePeriod, PeriodUnit gracePeriodUnit, Double interest,
-			PeriodUnit interestUnit) {
-		super(id, name, account, number, expiration, type, status, CreditCard.class);
+	public CreditCard(Long id) {
+		super(id, CreditCard.class);
+	}
+
+	public CreditCard(Long id, String name, Account account, String printedName, String number, Date expiration, Integer closingDay, Integer gracePeriod, PeriodUnit gracePeriodUnit, Double interest,
+			PeriodUnit interestUnit, Double threshold, CardType type, CardStatus status) {
+		super(id, name, account, printedName, number, expiration, type, status, CreditCard.class);
 		this.closingDay = closingDay;
 		this.gracePeriod = gracePeriod;
-		this.gracePeriodUnit = gracePeriodUnit.getCode();
+		this.gracePeriodUnit = gracePeriodUnit == null ? null : gracePeriodUnit.getCode();
 		this.interest = interest;
-		this.interestUnit = interestUnit.getCode();
+		this.interestUnit = interestUnit == null ? null : interestUnit.getCode();
+		this.threshold = threshold;
 	}
 
 	public Integer getClosingDay() {
@@ -66,12 +73,12 @@ public class CreditCard extends Card {
 		this.gracePeriod = gracePeriod;
 	}
 
-	public String getGracePeriodUnit() {
-		return PeriodUnit.toEnum(gracePeriodUnit).getLabel();
+	public Integer getGracePeriodUnit() {
+		return gracePeriodUnit;
 	}
 
 	public void setGracePeriodUnit(PeriodUnit gracePeriodUnit) {
-		this.gracePeriodUnit = gracePeriodUnit.getCode();
+		this.gracePeriodUnit = gracePeriodUnit == null ? null : gracePeriodUnit.getCode();
 	}
 
 	public Double getInterest() {
@@ -82,11 +89,19 @@ public class CreditCard extends Card {
 		this.interest = interest;
 	}
 
-	public String getInterestUnit() {
-		return PeriodUnit.toEnum(interestUnit).getLabel();
+	public Integer getInterestUnit() {
+		return interestUnit;
 	}
 
 	public void setInterestUnit(PeriodUnit interestUnit) {
-		this.interestUnit = interestUnit.getCode();
+		this.interestUnit = interestUnit == null ? null : interestUnit.getCode();
+	}
+
+	public Double getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(Double threshold) {
+		this.threshold = threshold;
 	}
 }

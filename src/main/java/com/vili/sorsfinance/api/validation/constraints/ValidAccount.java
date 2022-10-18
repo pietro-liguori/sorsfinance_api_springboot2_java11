@@ -8,14 +8,12 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
 import com.vili.sorsfinance.api.validation.AccountValidator;
 
 @Documented
-@NotNull(message = "Must not be null")
 @Constraint(validatedBy = AccountValidator.class)
-@Target({ ElementType.TYPE })
+@Target({ ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidAccount {
 	String message() default "Account validation error";

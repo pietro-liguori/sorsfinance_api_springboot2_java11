@@ -8,12 +8,10 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
 import com.vili.sorsfinance.api.validation.CardValidator;
 
 @Documented
-@NotNull(message = "Must not be null")
 @Constraint(validatedBy = CardValidator.class)
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

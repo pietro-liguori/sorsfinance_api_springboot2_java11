@@ -1,6 +1,7 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import com.vili.sorsfinance.api.repositories.BranchRepository;
 import com.vili.sorsfinance.api.services.BranchService;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(value = BranchService.class)
@@ -24,11 +26,16 @@ public class Branch extends BusinessEntity {
 	private String name;
 	
 	@OneToMany(mappedBy = "branch")
+	@NoFilter
 	@JsonIgnore
-	private Set<Person> people = new HashSet<>();
+	private Set<LegalPerson> people = new HashSet<>();
 	
 	public Branch() {
 		super();
+	}
+
+	public Branch(Long id) {
+		super(id, Branch.class);
 	}
 
 	public Branch(Long id, String name) {
@@ -44,7 +51,7 @@ public class Branch extends BusinessEntity {
 		this.name = name;
 	}
 	
-	public Set<Person> getPeople() {
-		return people;
+	public List<LegalPerson> getPeople() {
+		return people.stream().toList();
 	}
 }

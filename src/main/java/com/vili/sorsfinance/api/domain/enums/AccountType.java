@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.vili.sorsfinance.api.utils.TypeAssociations;
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
 
 public enum AccountType {
 
-	WALLET(1, "Carteira", TypeAssociations.WALLET_PAYMENT_CARDS_MAP),
-	CHECKING_ACCOUNT(2, "Conta corrente", TypeAssociations.CHECKING_ACCOUNT_PAYMENT_CARDS_MAP),
-	SAVINGS_ACCOUNT(3, "Conta poupança", TypeAssociations.SAVINGS_ACCOUNT_PAYMENT_CARDS_MAP),
-	SALARY_ACCOUNT(4, "Conta salário", TypeAssociations.SALARY_ACCOUNT_PAYMENT_CARDS_MAP),
-	TICKET_ACCOUNT(5, "Ticket", TypeAssociations.TICKET_ACCOUNT_PAYMENT_CARDS_MAP);
+	WALLET(1, "Carteira", TypeAssociations.ENABLED_CARDS_FOR_WALLETS),
+	CHECKING_ACCOUNT(2, "Conta corrente", TypeAssociations.ENABLED_CARDS_FOR_CHECKING_ACCOUNTS),
+	SAVINGS_ACCOUNT(3, "Conta poupança", TypeAssociations.ENABLED_CARDS_FOR_SAVINGS_ACCOUNTS),
+	SALARY_ACCOUNT(4, "Conta salário", TypeAssociations.ENABLED_CARDS_FOR_SALARY_ACCOUNTS),
+	VOUCHER_ACCOUNT(5, "Ticket", TypeAssociations.ENABLED_CARDS_FOR_PROVIDER_ACCOUNTS);
 
 	private Integer code;
 	private String label;
@@ -32,7 +32,7 @@ public enum AccountType {
 		return label;
 	}
 	
-	public Map<PaymentType, List<CardType>> getPaymentCardsMap() {
+	public Map<PaymentType, List<CardType>> getEnabledCardsByPaymentType() {
 		return paymentCardsMap;
 	}
 

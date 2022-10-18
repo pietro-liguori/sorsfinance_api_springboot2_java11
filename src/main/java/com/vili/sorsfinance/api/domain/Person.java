@@ -1,11 +1,10 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -17,14 +16,14 @@ import com.vili.sorsfinance.api.domain.enums.PersonProfile;
 import com.vili.sorsfinance.api.domain.enums.PersonType;
 import com.vili.sorsfinance.api.repositories.PersonRepository;
 import com.vili.sorsfinance.api.services.PersonService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(value = PersonService.class)
 @RepositoryRef(value = PersonRepository.class)
-@JsonPropertyOrder({ "id", "name", "socialId", "profile", "type", "branch", "contact" })
+@JsonPropertyOrder({ "id", "name", "nickname", "tradeName", "socialId", "birthDate", "foundationDate", "status", "profile", "type", "branch", "contact" })
 public class Person extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -42,37 +41,43 @@ public class Person extends BusinessEntity {
 	private Integer profile;
 	
 	@OneToOne(mappedBy = "owner")
-	@FilterSetting(alias = "address", nesting = { "addresses", "id" })
-	@FilterSetting(alias = "email", nesting = { "emails", "id" })
-	@FilterSetting(alias = "phone", nesting = { "phones", "id" })
+	@NoFilter
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties({ "owner" })
 	private Contact contact;
 	
-	@ManyToOne
-	@JoinColumn(name = "branch_id")
-	@FilterSetting(nesting = { "id" })
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Branch branch;
-	
 	@OneToMany(mappedBy = "holder")
+	@NoFilter
 	@JsonIgnore
 	private Set<Account> accounts = new HashSet<>();
 	
 	@OneToMany(mappedBy = "recipient")
+	@NoFilter
 	@JsonIgnore
 	private Set<Transaction> transactions = new HashSet<>();
 
 	public Person() {
 		super();
 	}
-	
+
 	public Person(Long id) {
 		super(id, Person.class);
 	}
 
 	public Person(Long id, String name, String socialId, PersonType type, PersonProfile profile) {
 		super(id, Person.class);
+		this.name = name;
+		this.socialId = socialId;
+		this.type = type == null ? null : type.getCode();
+		this.profile = profile == null ? null : profile.getCode();
+	}
+
+	protected Person(Long id, Class<?> domain) {
+		super(id, domain);
+	}
+
+	protected Person(Long id, String name, String socialId, PersonType type, PersonProfile profile, Class<?> domain) {
+		super(id, domain);
 		this.name = name;
 		this.socialId = socialId;
 		this.type = type == null ? null : type.getCode();
@@ -95,26 +100,20 @@ public class Person extends BusinessEntity {
 		this.socialId = socialId;
 	}
 
-	public String getType() {
-		if (type == null)
-			return null;
-		
-		return PersonType.toEnum(type).getLabel();
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(PersonType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
-	public String getProfile() {
-		if (profile == null)
-			return null;
-		
-		return PersonProfile.toEnum(profile).getLabel();
+	public Integer getProfile() {
+		return profile;
 	}
 
 	public void setProfile(PersonProfile profile) {
-		this.profile = profile.getCode();
+		this.profile = profile == null ? null : profile.getCode();
 	}
 
 	public Contact getContact() {
@@ -125,16 +124,8 @@ public class Person extends BusinessEntity {
 		this.contact = contact;
 	}
 
-	public Branch getBranch() {
-		return branch;
-	}
-
-	public void setBranch(Branch branch) {
-		this.branch = branch;
-	}
-
-	public Set<Transaction> getTransactions() {
-		return transactions;
+	public List<Transaction> getTransactions() {
+		return transactions.stream().toList();
 	}
 
 	public void addTransaction(Transaction transaction) {
@@ -147,8 +138,8 @@ public class Person extends BusinessEntity {
 		}
 	}
 
-	public Set<Account> getAccounts() {
-		return accounts;
+	public List<Account> getAccounts() {
+		return accounts.stream().toList();
 	}
 
 	public void addAccount(Account account) {

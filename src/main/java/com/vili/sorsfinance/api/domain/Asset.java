@@ -1,6 +1,7 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -17,16 +18,16 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.domain.enums.AssetType;
 import com.vili.sorsfinance.api.repositories.AssetRepository;
 import com.vili.sorsfinance.api.services.AssetService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(value = AssetService.class)
 @RepositoryRef(value = AssetRepository.class)
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonPropertyOrder({ "id", "name", "brand", "deliveryDate", "expirationDate", "type", "categories" })
+@JsonPropertyOrder({ "id", "name", "brand", "description", "provider", "content", "contentType", "contentUnit", "deliveryDate", "expirationDate", "type", "categories" })
 public class Asset extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -44,6 +45,7 @@ public class Asset extends BusinessEntity {
 	private Set<Category> categories = new HashSet<>();
 	
 	@OneToMany(mappedBy = "asset")
+	@NoFilter
 	@JsonIgnore
 	private Set<TransactionItem> items = new HashSet<>();
 
@@ -55,10 +57,14 @@ public class Asset extends BusinessEntity {
 		super(id, Asset.class);
 	}
 
-	public Asset(Long id, String name, AssetType type, Class<?> domain) {
+	protected Asset(Long id, Class<?> domain) {
+		super(id, domain);
+	}
+
+	protected Asset(Long id, String name, AssetType type, Class<?> domain) {
 		super(id, domain);
 		this.name = name;
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
 	public String getName() {
@@ -69,20 +75,16 @@ public class Asset extends BusinessEntity {
 		this.name = name;
 	}
 
-	public String getType() {
-		try {
-			return AssetType.toEnum(type).getLabel();
-		} catch (EnumValueNotFoundException e) {
-			return null;
-		}
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(AssetType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
-	public Set<Category> getCategories() {
-		return categories;
+	public List<Category> getCategories() {
+		return categories.stream().toList();
 	}
 
 	public void addCategory(Category category) {
@@ -95,8 +97,8 @@ public class Asset extends BusinessEntity {
 		}
 	}
 
-	public Set<TransactionItem> getItems() {
-		return items;
+	public List<TransactionItem> getItems() {
+		return items.stream().toList();
 	}
 	
 	public void addItem(TransactionItem item) {

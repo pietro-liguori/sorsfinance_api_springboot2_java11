@@ -1,6 +1,6 @@
 package com.vili.sorsfinance.api.domain.enums;
 
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
 
 public enum CardType {
 
@@ -8,10 +8,10 @@ public enum CardType {
 	CREDIT(2, "Crédito"),
 	MULTIPLE(3, "Múltiplo"),
 	ONLINE(4, "Online"),
-	MEAL_TICKET(5, "Voucher"),
-	FOOD_TICKET(6, "Voucher"),
-	TRANSPORT_TICKET(7, "Voucher"),
-	FUEL_TICKET(8, "Voucher");
+	MEAL_TICKET(5, "Vale Refeição"),
+	FOOD_TICKET(6, "Vale Alimentação"),
+	TRANSPORT_TICKET(7, "Vale Transporte"),
+	FUEL_TICKET(8, "Vale Combustível");
 	
 	private Integer code;
 	private String label;

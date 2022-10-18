@@ -4,9 +4,9 @@ import com.vili.sorsfinance.api.domain.Category;
 import com.vili.sorsfinance.api.validation.constraints.ValidCategory;
 import com.vili.sorsfinance.framework.DataTransferObject;
 
+@ValidCategory
 public class CategoryDTO extends DataTransferObject {
 
-	@ValidCategory
 	private String name;
 
 	public CategoryDTO() {
@@ -17,9 +17,8 @@ public class CategoryDTO extends DataTransferObject {
 		return name;
 	}
 
-	public CategoryDTO setName(String name) {
+	public void setName(String name) {
 		this.name = name;
-		return this;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.vili.sorsfinance.api.domain.State;
 import com.vili.sorsfinance.framework.annotations.EntityRef;
-import com.vili.sorsfinance.framework.interfaces.IService;
+import com.vili.sorsfinance.framework.services.IService;
 
 @Service
 @EntityRef(State.class)

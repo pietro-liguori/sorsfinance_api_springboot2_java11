@@ -7,7 +7,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import com.vili.sorsfinance.framework.interfaces.IService;
+import com.vili.sorsfinance.framework.services.IService;
 
 @Documented
 @Retention(RUNTIME)

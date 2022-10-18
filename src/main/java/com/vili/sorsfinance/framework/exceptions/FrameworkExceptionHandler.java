@@ -13,11 +13,26 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.vili.sorsfinance.api.exceptions.NoSuchPathException;
+import com.vili.sorsfinance.framework.exceptions.custom.CastingException;
+import com.vili.sorsfinance.framework.exceptions.custom.DatabaseException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.InvalidRequestParamException;
+import com.vili.sorsfinance.framework.exceptions.custom.NoSuchEntityException;
+import com.vili.sorsfinance.framework.exceptions.custom.OperationNotSupportedException;
+import com.vili.sorsfinance.framework.exceptions.custom.ResourceNotFoundException;
 
 @ControllerAdvice
 public class FrameworkExceptionHandler {
-	
+
+	@ExceptionHandler(OperationNotSupportedException.class)
+	public ResponseEntity<StandardError>enumValueNotFound(OperationNotSupportedException e, HttpServletRequest request) {
+		e.printStackTrace();
+		String name = "Operation not supported";
+		HttpStatus status = HttpStatus.NOT_IMPLEMENTED;
+		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
 	@ExceptionHandler(EnumValueNotFoundException.class)
 	public ResponseEntity<StandardError>enumValueNotFound(EnumValueNotFoundException e, HttpServletRequest request) {
 		e.printStackTrace();
@@ -44,6 +59,14 @@ public class FrameworkExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 	
+	@ExceptionHandler(CastingException.class)
+	public ResponseEntity<StandardError> database(CastingException e, HttpServletRequest request) {
+		String name = "Casting error";
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
 	@ExceptionHandler(DatabaseException.class)
 	public ResponseEntity<StandardError> database(DatabaseException e, HttpServletRequest request) {
 		String name = "Database error";
@@ -52,20 +75,16 @@ public class FrameworkExceptionHandler {
 		return ResponseEntity.status(status).body(err);
 	}
 	
-	
 	@ExceptionHandler(InvalidRequestParamException.class)
 	public ResponseEntity<StandardError> database(InvalidRequestParamException e, HttpServletRequest request) {
 		String name = "Invalid request parameter";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
-		return ResponseEntity.status(status).body(err);
-	}
-	
-	@ExceptionHandler(NoSuchPathException.class)
-	public ResponseEntity<StandardError> database(NoSuchPathException e, HttpServletRequest request) {
-		String name = "No such path";
-		HttpStatus status = HttpStatus.BAD_REQUEST;
-		StandardError err = new StandardError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		MultipleError err = new MultipleError(Instant.now(), status.value(), name, request.getRequestURI());
+		
+		for (FieldMessage x : e.getErrors()) {
+			err.add(x);
+		}
+		
 		return ResponseEntity.status(status).body(err);
 	}
 	
@@ -81,7 +100,7 @@ public class FrameworkExceptionHandler {
 	public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
 		String name = "Validation error";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		ValidationError err = new ValidationError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		MultipleError err = new MultipleError(Instant.now(), status.value(), name, request.getRequestURI());
 		
 		for (FieldError x : e.getBindingResult().getFieldErrors()) {
 			err.add(x.getField(), x.getDefaultMessage());
@@ -94,7 +113,7 @@ public class FrameworkExceptionHandler {
 	public ResponseEntity<StandardError> validation(HttpMessageNotReadableException e, HttpServletRequest request) {
 		String name = "Deserialization error";
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		ValidationError err = new ValidationError(Instant.now(), status.value(), name, e.getMessage(), request.getRequestURI());
+		MultipleError err = new MultipleError(Instant.now(), status.value(), name, request.getRequestURI());
 		String errorMsg = e.getMessage();
 		String simpleMsg = errorMsg.split(";")[0];
 		int fieldNameStart = errorMsg.indexOf("DTO[") + 5;

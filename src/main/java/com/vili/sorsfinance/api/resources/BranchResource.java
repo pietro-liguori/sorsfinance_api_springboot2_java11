@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vili.sorsfinance.api.domain.Branch;
 import com.vili.sorsfinance.api.domain.dto.BranchDTO;
 import com.vili.sorsfinance.framework.annotations.EntityRef;
-import com.vili.sorsfinance.framework.interfaces.IResource;
+import com.vili.sorsfinance.framework.controllers.IController;
 
 @RestController
 @EntityRef(Branch.class)
 @RequestMapping(value = "/branches")
-public class BranchResource implements IResource<BranchDTO> {
+public class BranchResource implements IController<BranchDTO> {
 
 }

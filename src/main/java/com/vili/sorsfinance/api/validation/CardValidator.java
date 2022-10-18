@@ -1,9 +1,7 @@
 package com.vili.sorsfinance.api.validation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -14,14 +12,14 @@ import com.vili.sorsfinance.api.domain.Account;
 import com.vili.sorsfinance.api.domain.Card;
 import com.vili.sorsfinance.api.domain.dto.CardDTO;
 import com.vili.sorsfinance.api.domain.enums.AccountType;
+import com.vili.sorsfinance.api.domain.enums.CardStatus;
 import com.vili.sorsfinance.api.domain.enums.CardType;
 import com.vili.sorsfinance.api.domain.enums.PaymentType;
 import com.vili.sorsfinance.api.domain.enums.PeriodUnit;
 import com.vili.sorsfinance.api.repositories.AccountRepository;
 import com.vili.sorsfinance.api.validation.constraints.ValidCard;
-import com.vili.sorsfinance.framework.FieldMessage;
-import com.vili.sorsfinance.framework.enums.DTOType;
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.DTOType;
+import com.vili.sorsfinance.framework.exceptions.FieldMessage;
 
 public class CardValidator implements ConstraintValidator<ValidCard, CardDTO> {
 
@@ -34,93 +32,61 @@ public class CardValidator implements ConstraintValidator<ValidCard, CardDTO> {
 
 	@Override
 	public boolean isValid(CardDTO dto, ConstraintValidatorContext context) {
-		List<FieldMessage> list = new ArrayList<>();
+		Validator validator = new Validator();
 
 		if (dto.getMethod() == DTOType.INSERT) {
-			if (dto.getType() != null) {
-				try {
-					CardType cardType = CardType.toEnum(dto.getType());
+			validator.length("name", dto.getName(), 5, 60, true);
+			validator.enumValue("status", dto.getStatus(), CardStatus.class, true);
+			
+			if (validator.enumValue("type", dto.getType(), CardType.class, true)) {
+				CardType type = CardType.toEnum(dto.getType());
+				Account account = (Account) validator.entityId("accountId", dto.getAccountId(), Account.class, true);
+				if (account != null) {
+					AccountType accountType = AccountType.toEnum(account.getType());
+					boolean isCardTypeAllowed = false;
+					boolean noCardsAllowed = true;
 
-					if (dto.getAccountId() != null) {
-						Optional<Account> aux = accountRepo.findById(dto.getAccountId());
-
-						if (aux.isEmpty())
-							list.add(new FieldMessage("accountId", "Account not found: " + dto.getAccountId()));
-						else {
-							AccountType accountType = AccountType.toEnum(aux.get().getType());
-							boolean isCardTypeAllowed = false;
-							boolean noCardsAllowed = true;
-
-							for (Entry<PaymentType, List<CardType>> entry : accountType.getPaymentCardsMap().entrySet()) {
-								if (entry.getValue().contains(cardType))
-									isCardTypeAllowed = true;
-								
-								if (noCardsAllowed && !entry.getValue().isEmpty())
-									noCardsAllowed = false;
-							}
-							
-							if (!isCardTypeAllowed) {
-								if (noCardsAllowed)
-									list.add(new FieldMessage("accountId",
-											"Referenced account(id=" + dto.getAccountId() + ") of type '" + accountType
-													+ "' is not allowed to have a cards"));
-								else
-									list.add(new FieldMessage("accountId",
-											"Referenced account(id=" + dto.getAccountId() + ") of type '" + accountType
-													+ "' is not allowed to have a card of type '" + cardType + "'"));
-							}
-						}
+					for (Entry<PaymentType, List<CardType>> entry : accountType.getEnabledCardsByPaymentType().entrySet()) {
+						if (entry.getValue().contains(type))
+							isCardTypeAllowed = true;
+						
+						if (noCardsAllowed && !entry.getValue().isEmpty())
+							noCardsAllowed = false;
 					}
-
-					if (Card.CREDIT_CARD_TYPES.contains(cardType)) {
-						if (dto.getClosingDay() == null) {
-							list.add(new FieldMessage("closingDay", "Must not be null"));
-						} else {
-							if (dto.getClosingDay() < 1 || dto.getClosingDay() > 31) {
-								list.add(new FieldMessage("closingDay", "Must not be between 1 and 31"));
-							}
-						}
-
-						if (dto.getGracePeriod() == null) {
-							list.add(new FieldMessage("gracePeriod", "Must not be null"));
-						} else {
-							if (dto.getGracePeriod() < 0)
-								list.add(new FieldMessage("gracePeriod", "Must be not be negative"));
-						}
-
-						if (dto.getGracePeriodUnit() == null) {
-							list.add(new FieldMessage("gracePeriodUnit", "Must not be null"));
-						} else {
-							EnumValidator.validate(dto.getGracePeriodUnit(), PeriodUnit.class)
-									.forEach(e -> list.add(new FieldMessage("gracePeriodUnit", e.getMessage())));
-						}
-						if (dto.getInterest() == null) {
-							list.add(new FieldMessage("interest", "Must not be null"));
-						} else {
-							if (dto.getInterest().isNaN() || dto.getInterest() < 0)
-								list.add(new FieldMessage("interest", "Must be not be negative"));
-						}
-
-						if (dto.getInterestUnit() == null) {
-							list.add(new FieldMessage("interestUnit", "Must not be null"));
-						} else {
-							EnumValidator.validate(dto.getInterestUnit(), PeriodUnit.class)
-									.forEach(e -> list.add(new FieldMessage("interestUnit", e.getMessage())));
-						}
+					
+					if (!isCardTypeAllowed) {
+						if (noCardsAllowed)
+							validator.addError(new FieldMessage("accountId",
+									"Referenced account(id=" + dto.getAccountId() + ") of type '" + accountType
+											+ "' is not allowed to have cards"));
+						else
+							validator.addError(new FieldMessage("accountId",
+									"Referenced account(id=" + dto.getAccountId() + ") of type '" + accountType
+											+ "' is not allowed to have a card of type '" + type + "'"));
 					}
-				} catch (EnumValueNotFoundException e) {
+				}
+
+				if (Card.BANK_CARD_TYPES.contains(type)) {
+					validator.notEmpty("printedName", dto.getPrintedName(), true);
+					validator.future("expiration", dto.getExpiration(), true);
+					
+					if (Card.CREDIT_CARD_TYPES.contains(type)) {
+						validator.range("closingDay", dto.getClosingDay(), 1, 31, true);
+						validator.positiveOrZero("gracePeriod", dto.getGracePeriod(), true);
+						validator.positiveOrZero("interestUnit", dto.getInterest(), true);
+						validator.enumValue("gracePeriodUnit", dto.getGracePeriodUnit(), PeriodUnit.class, true);
+						validator.enumValue("interestUnit", dto.getInterestUnit(), PeriodUnit.class, true);
+						validator.notEmpty("limit", dto.getLimit(), true);
+					}
+				} else if (Card.VOUCHER_TYPES.contains(type)) {
+					validator.notEmpty("balance", dto.getBalance(), true);
+					validator.future("expiration", dto.getExpiration(), true);
 				}
 			}
-		} else if (dto.getMethod() == DTOType.UPDATE) {
-			// TODO all account types update validation
+		} else {
+
 		}
 
-		for (FieldMessage e : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(e.getMessage()).addPropertyNode(e.getField())
-					.addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return validator.validate(context);
 	}
 }

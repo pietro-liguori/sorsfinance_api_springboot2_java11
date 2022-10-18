@@ -1,39 +1,34 @@
 package com.vili.sorsfinance.api.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 
-import com.vili.sorsfinance.api.repositories.BranchRepository;
+import com.vili.sorsfinance.api.domain.Branch;
+import com.vili.sorsfinance.api.domain.dto.BranchDTO;
 import com.vili.sorsfinance.api.validation.constraints.ValidBranch;
+import com.vili.sorsfinance.framework.DTOType;
 
-public class BranchValidator implements ConstraintValidator<ValidBranch, String> {
-
-	@Autowired
-	BranchRepository repo;
+public class BranchValidator implements ConstraintValidator<ValidBranch, BranchDTO> {
 
 	@Override
 	public void initialize(ValidBranch ann) {
 	}
 
 	@Override
-	public boolean isValid(String name, ConstraintValidatorContext context) {
-		List<String> list = new ArrayList<>();
+	public boolean isValid(BranchDTO dto, ConstraintValidatorContext context) {
+		Validator validator = new Validator();
 
-		if (name != null) {
-			if (!repo.findByNameIgnoreCase(name).isEmpty())
-				list.add("Branch '" + name + "' already exists");
+		if (dto.getMethod().equals(DTOType.INSERT)) {
+			Branch probe = new Branch();
+			probe.setName(dto.getName());
+			validator.unique("name", Example.of(probe, ExampleMatcher.matching().withIgnoreCase()), true);
+		} else {
+			
 		}
 
-		for (String msg : list) {
-			context.disableDefaultConstraintViolation();
-			context.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
-		}
-
-		return list.isEmpty();
+		return validator.validate(context);
 	}
 }

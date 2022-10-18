@@ -2,6 +2,7 @@ package com.vili.sorsfinance.api.domain;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -14,17 +15,19 @@ import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.vili.sorsfinance.api.domain.enums.TransactionDirection;
 import com.vili.sorsfinance.api.domain.enums.TransactionType;
 import com.vili.sorsfinance.api.repositories.TransactionRepository;
 import com.vili.sorsfinance.api.services.TransactionService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(TransactionService.class)
 @RepositoryRef(TransactionRepository.class)
-@JsonPropertyOrder({ "id", "date", "description", "total", "discount", "type", "categories", "recipient", "payments", "items" })
+@JsonPropertyOrder({ "id", "date", "description", "total", "discount", "type", "direction", "categories", "recipient", "payments", "items" })
 public class Transaction extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -39,11 +42,11 @@ public class Transaction extends BusinessEntity {
 	private Double discount;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Double total;
-	
-	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer type;
 	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Integer direction;
+
 	@ManyToOne
 	@JoinColumn(name = "recipientId")
 	@FilterSetting(nesting = { "id" })
@@ -57,6 +60,7 @@ public class Transaction extends BusinessEntity {
 	private Set<Category> categories = new HashSet<>();
 	
 	@OneToMany(mappedBy = "transaction")
+	@NoFilter
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@JsonIgnoreProperties({ "transaction" })
 	private Set<TransactionItem> items = new HashSet<>();
@@ -77,15 +81,15 @@ public class Transaction extends BusinessEntity {
 		super(id, Transaction.class);
 	}
 
-	public Transaction(Long id, Person recipient, Date date, String description, Double total, Double discount,
-			TransactionType type) {
+	public Transaction(Long id, Person recipient, Date date, String description, Double discount,
+			TransactionType type, TransactionDirection direction) {
 		super(id, Transaction.class);
 		this.recipient = recipient;
 		this.date = date;
 		this.description = description;
 		this.discount = discount;
-		this.total = total;
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
+		this.direction = direction == null ? null : direction.getCode();
 	}
 
 	public Date getDate() {
@@ -112,24 +116,24 @@ public class Transaction extends BusinessEntity {
 		this.discount = discount;
 	}
 
-	public Double getTotal() {
-		return total;
-	}
-
-	public void setTotal(Double total) {
-		this.total = total;
-	}
-
-	public String getType() {
-		return TransactionType.toEnum(type).getLabel();
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(TransactionType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
-	public Set<TransactionItem> getItems() {
-		return items;
+	public Integer getDirection() {
+		return direction;
+	}
+
+	public void setDirection(TransactionDirection direction) {
+		this.direction = direction == null ? null : direction.getCode();
+	}
+
+	public List<TransactionItem> getItems() {
+		return items.stream().toList();
 	}
 
 	public void addItem(TransactionItem item) {
@@ -151,24 +155,22 @@ public class Transaction extends BusinessEntity {
 		return this;
 	}
 
-	public Set<Category> getCategories() {
-		return categories;
+	public List<Category> getCategories() {
+		return categories.stream().toList();
 	}
 
-	public Transaction addCategory(Category category) {
+	public void addCategory(Category category) {
 		categories.add(category);
-		return this;
 	}
 
-	public Transaction addCategories(Category... categories) {
+	public void addCategories(Category... categories) {
 		for (Category x : categories) {
 			this.categories.add(x);
 		}
-		return this;
 	}
 
-	public Set<Payment> getPayments() {
-		return payments;
+	public List<Payment> getPayments() {
+		return payments.stream().toList();
 	}
 
 	public void addPayment(Payment payment) {
@@ -179,5 +181,15 @@ public class Transaction extends BusinessEntity {
 		for (Payment x : payments) {
 			this.payments.add(x);
 		}
+	}
+
+	public Double getTotal() {
+		Double total = 0.0;
+		
+		for (Payment pay : getPayments()) {
+			total += pay.getValue();
+		}
+		
+		return total;
 	}
 }

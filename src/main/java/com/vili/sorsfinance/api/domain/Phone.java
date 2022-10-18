@@ -1,22 +1,27 @@
 package com.vili.sorsfinance.api.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.domain.enums.PhoneType;
 import com.vili.sorsfinance.api.repositories.PhoneRepository;
 import com.vili.sorsfinance.api.services.PhoneService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(value = PhoneService.class)
 @RepositoryRef(value = PhoneRepository.class)
-@JsonPropertyOrder({ "id", "number", "type", "preferred", "contact" })
+@JsonPropertyOrder({ "id", "number", "countryCode", "countryCodes", "type", "preferred", "contact" })
 public class Phone extends BusinessEntity {
 	
 	private static final long serialVersionUID = 1L;
@@ -30,10 +35,16 @@ public class Phone extends BusinessEntity {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Boolean preferred;
 	
+	@OneToOne
+	@JoinColumn(name = "country_id")
+	@FilterSetting(nesting = { "id" })
+	@JsonIgnore
+	private Country country;
+	
 	@ManyToOne
 	@FilterSetting(alias = "owner", nesting = { "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonIgnoreProperties({ "addresses", "phones", "emails", "preferredContact" })
+	@JsonIgnoreProperties({ "addresses", "phones", "emails" })
 	private Contact contact;
 	
 	public Phone() {
@@ -44,10 +55,11 @@ public class Phone extends BusinessEntity {
 		super(id, Phone.class);
 	}
 
-	public Phone(Long id, String number, PhoneType type, Boolean preferred) {
+	public Phone(Long id, String number, Country country, PhoneType type, Boolean preferred) {
 		super(id, Phone.class);
+		this.country = country;
 		this.number = number;
-		this.type = type.getCode();
+		this.type =  type == null ? null : type.getCode();
 		this.preferred = preferred;
 	}
 
@@ -59,12 +71,12 @@ public class Phone extends BusinessEntity {
 		this.number = number;
 	}
 
-	public String getType() {
-		return PhoneType.toEnum(type).getLabel();
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(PhoneType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
 	public Boolean getPreferred() {
@@ -75,11 +87,31 @@ public class Phone extends BusinessEntity {
 		this.preferred = preferred;
 	}
 
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
 	public Contact getContact() {
 		return contact;
 	}
 
 	public void setContact(Contact contact) {
 		this.contact = contact;
+	}
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public String getCountryCode() {
+		List<String> codes = this.country.getAreaCodes();
+		return codes.size() != 1 ? null : codes.get(0);
+	}
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	public List<String> getCountryCodes() {
+		List<String> codes = this.country.getAreaCodes();
+		return codes.size() < 2 ? null : codes;
 	}
 }

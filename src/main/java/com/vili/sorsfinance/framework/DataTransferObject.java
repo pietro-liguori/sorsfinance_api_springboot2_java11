@@ -1,7 +1,5 @@
 package com.vili.sorsfinance.framework;
 
-import com.vili.sorsfinance.framework.interfaces.IDataTransferObject;
-
 public abstract class DataTransferObject implements IDataTransferObject {
 
 	private Long id;

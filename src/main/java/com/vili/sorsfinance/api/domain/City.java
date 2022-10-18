@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.repositories.CityRepository;
 import com.vili.sorsfinance.api.services.CityService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
 
 @Entity
 @ServiceRef(value = CityService.class)
@@ -27,6 +27,7 @@ public class City extends BusinessEntity {
 	@ManyToOne
 	@JoinColumn(name = "state_id")
 	@FilterSetting(nesting = { "id" })
+	@FilterSetting(alias = "country", nesting = { "country", "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties({ "cities" })
 	private State state;
@@ -35,14 +36,14 @@ public class City extends BusinessEntity {
 		super();
 	}
 
+	public City(Long id) {
+		super(id, City.class);
+	}
+
 	public City(Long id, String name, State state) {
 		super(id, City.class);
 		this.name = name;
 		this.state = state;
-	}
-
-	public City(Long id) {
-		super(id, City.class);
 	}
 
 	public String getName() {

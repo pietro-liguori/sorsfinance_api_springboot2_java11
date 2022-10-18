@@ -2,6 +2,7 @@ package com.vili.sorsfinance.api.domain;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -18,11 +19,13 @@ import com.vili.sorsfinance.api.repositories.CreditCardStatementRepository;
 import com.vili.sorsfinance.api.services.CreditCardStatementService;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(value = CreditCardStatementService.class)
 @RepositoryRef(value = CreditCardStatementRepository.class)
-@JsonPropertyOrder({ "id", "description", "closingDate", "dueDate", "installments", "payDate", "status", "payment", "card", "items" })
+@JsonPropertyOrder({ "id", "description", "closingDate", "dueDate", "total", "payDate", "paidValue", "status", "payment", "account", "card", "items" })
 public class CreditCardStatement extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -40,19 +43,25 @@ public class CreditCardStatement extends BusinessEntity {
 	private Date payDate;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
+	private Double paidValue;
+	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer status;
 	
 	@OneToOne
 	@JoinColumn(name = "payment_id")
+	@NoFilter
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Payment payment;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "card_id")
+	@JoinColumn(name = "account_id")
+	@FilterSetting(nesting = { "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private CreditCard card;
+	private BankAccount account;
 	
 	@OneToMany(mappedBy = "statement")
+	@NoFilter
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@JsonIgnoreProperties({ "statement" })
 	private Set<CreditInstallment> items = new HashSet<>();
@@ -61,13 +70,23 @@ public class CreditCardStatement extends BusinessEntity {
 		super();
 	}
 
-	public CreditCardStatement(Long id, CreditCard card, String description, Date closingDate, Date dueDate, PaymentStatus status) {
+	public CreditCardStatement(Long id) {
 		super(id, CreditCardStatement.class);
-		this.card = card;
+	}
+
+	public CreditCardStatement(BankAccount account, String description) {
+		super(null, CreditCardStatement.class);
+		this.account = account;
+		this.description = description;
+	}
+
+	public CreditCardStatement(Long id, BankAccount account, String description, Date closingDate, Date dueDate) {
+		super(id, CreditCardStatement.class);
+		this.account = account;
 		this.description = description;
 		this.closingDate = closingDate;
 		this.dueDate = dueDate;
-		this.status = status.getCode();
+		this.status = PaymentStatus.NOT_PAID.getCode();
 	}
 
 	public String getDescription() {
@@ -102,12 +121,20 @@ public class CreditCardStatement extends BusinessEntity {
 		this.payDate = payDate;
 	}
 
-	public String getStatus() {
-		return PaymentStatus.toEnum(status).getLabel();
+	public Double getPaidValue() {
+		return paidValue;
+	}
+
+	public void setPaidValue(Double paidValue) {
+		this.paidValue = paidValue;
+	}
+
+	public Integer getStatus() {
+		return status;
 	}
 
 	public void setStatus(PaymentStatus status) {
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 	}
 
 	public Payment getPayment() {
@@ -118,16 +145,16 @@ public class CreditCardStatement extends BusinessEntity {
 		this.payment = payment;
 	}
 
-	public CreditCard getCard() {
-		return card;
+	public BankAccount getAccount() {
+		return account;
 	}
 
-	public void setCard(CreditCard card) {
-		this.card = card;
+	public void setAccount(BankAccount account) {
+		this.account = account;
 	}
 
-	public Set<CreditInstallment> getItems() {
-		return items;
+	public List<CreditInstallment> getItems() {
+		return items.stream().toList();
 	}
 
 	public void addItem(CreditInstallment item) {
@@ -138,5 +165,21 @@ public class CreditCardStatement extends BusinessEntity {
 		for (CreditInstallment x : items) {
 			this.items.add(x);
 		}
+	}
+	
+	public Double getTotal() {
+		Double total = 0.0;
+		
+		for (CreditInstallment item : items) {
+			total += item.getValue();
+		}
+		
+		return total;
+	}
+	
+	public Double getUpdatedTotal() {
+		// TODO
+		
+		return getTotal();
 	}
 }

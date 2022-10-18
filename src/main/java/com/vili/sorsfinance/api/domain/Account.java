@@ -22,27 +22,26 @@ import com.vili.sorsfinance.api.repositories.AccountRepository;
 import com.vili.sorsfinance.api.services.AccountService;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(AccountService.class)
 @RepositoryRef(AccountRepository.class)
 @Inheritance(strategy=InheritanceType.JOINED)
-@JsonPropertyOrder({ "id", "name", "type", "number", "agency", "balance", "savings", "overdraft", "creditLimit", "interest", "interestUnit", "gracePeriod", "gracePeriodUnit", "status", "holder", "bank" })
+@JsonPropertyOrder({ "id", "name", "type", "number", "agency", "balance", "savings", "overdraft", "interest", "interestUnit", "gracePeriod", "gracePeriodUnit", "status", "holder", "bank" })
 public class Account extends BusinessEntity {
 	
 	private static final long serialVersionUID = 1L;
 	
 	public static final List<AccountType> BANK_ACCOUNT_TYPES = Arrays.asList(AccountType.SAVINGS_ACCOUNT, AccountType.SALARY_ACCOUNT, AccountType.CHECKING_ACCOUNT);
 	
-	public static final List<AccountType> TICKET_ACCOUNT_TYPES = Arrays.asList(AccountType.TICKET_ACCOUNT);
+	public static final List<AccountType> VOUCHER_ACCOUNT_TYPES = Arrays.asList(AccountType.VOUCHER_ACCOUNT);
 	
 	public static final List<AccountType> WALLET_TYPES = Arrays.asList(AccountType.WALLET);
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private String name;
-	
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private Double balance;
 	
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Integer type;
@@ -52,11 +51,13 @@ public class Account extends BusinessEntity {
 	
 	@ManyToOne
 	@JoinColumn(name="holder_id")
+	@FilterSetting(nesting = { "id" })
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonIgnoreProperties({ "account", "contact" })
 	private Person holder;
 	
 	@OneToMany(mappedBy = "account")
+	@NoFilter
 	@JsonIgnore
 	private Set<Payment> payments = new HashSet<>();
 	
@@ -68,15 +69,14 @@ public class Account extends BusinessEntity {
 		super(id, Account.class);
 	}
 
-	public Account(Long id, Class<?> domain) {
+	protected Account(Long id, Class<?> domain) {
 		super(id, domain);
 	}
 
-	public Account(Long id, String name, Person holder, Double balance, AccountType type, AccountStatus status, Class<?> domain) {
+	protected Account(Long id, String name, Person holder, AccountType type, AccountStatus status, Class<?> domain) {
 		super(id, domain);
 		this.name = name;
 		this.holder = holder;
-		this.balance = balance;
 		this.type = type == null ? null : type.getCode();
 		this.status = status == null ? null : status.getCode();
 	}
@@ -89,34 +89,20 @@ public class Account extends BusinessEntity {
 		this.name = name;
 	}
 
-	public Double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(Double balance) {
-		this.balance = balance;
-	}
-
-	public String getType() {
-		if (type == null)
-			return null;
-		
-		return AccountType.toEnum(type).getLabel();
+	public Integer getType() {
+		return type;
 	}
 
 	public void setType(AccountType type) {
-		this.type = type.getCode();
+		this.type = type == null ? null : type.getCode();
 	}
 
-	public String getStatus() {
-		if (status == null)
-			return null;
-		
-		return AccountStatus.toEnum(status).getLabel();
+	public AccountStatus getStatus() {
+		return status == null ? null : AccountStatus.toEnum(status);
 	}
 
 	public void setStatus(AccountStatus status) {
-		this.status = status.getCode();
+		this.status = status == null ? null : status.getCode();
 	}
 
 	public Person getHolder() {
@@ -127,8 +113,8 @@ public class Account extends BusinessEntity {
 		this.holder = holder;
 	}
 
-	public Set<Payment> getPayments() {
-		return payments;
+	public List<Payment> getPayments() {
+		return payments.stream().toList();
 	}
 	
 	public void addPayment(Payment payment) {

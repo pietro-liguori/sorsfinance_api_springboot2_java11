@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vili.sorsfinance.api.domain.TransactionItem;
 import com.vili.sorsfinance.framework.DataTransferObject;
 import com.vili.sorsfinance.framework.annotations.EntityRef;
-import com.vili.sorsfinance.framework.interfaces.IResource;
+import com.vili.sorsfinance.framework.controllers.IController;
 
 @RestController
 @EntityRef(TransactionItem.class)
 @RequestMapping(value = "/transactionitems")
-public class TransactionItemResource implements IResource<DataTransferObject> {
+public class TransactionItemResource implements IController<DataTransferObject> {
 
 }

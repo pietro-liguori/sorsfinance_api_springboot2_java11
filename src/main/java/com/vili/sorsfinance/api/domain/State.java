@@ -1,6 +1,7 @@
 package com.vili.sorsfinance.api.domain;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -13,9 +14,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.vili.sorsfinance.api.repositories.StateRepository;
 import com.vili.sorsfinance.api.services.StateService;
-import com.vili.sorsfinance.framework.annotations.FilterSetting;
 import com.vili.sorsfinance.framework.annotations.RepositoryRef;
 import com.vili.sorsfinance.framework.annotations.ServiceRef;
+import com.vili.sorsfinance.framework.request.annotations.FilterSetting;
+import com.vili.sorsfinance.framework.request.annotations.NoFilter;
 
 @Entity
 @ServiceRef(value = StateService.class)
@@ -32,7 +34,7 @@ public class State extends BusinessEntity {
 	private String acronym;
 	
 	@OneToMany(mappedBy = "state")
-	@FilterSetting(alias = "city", nesting = { "id" })
+	@NoFilter
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@JsonIgnoreProperties({ "state" })
 	private Set<City> cities = new HashSet<>();
@@ -83,8 +85,8 @@ public class State extends BusinessEntity {
 		this.country = country;
 	}
 
-	public Set<City> getCities() {
-		return cities;
+	public List<City> getCities() {
+		return cities.stream().toList();
 	}
 
 	public void addCity(City city) {

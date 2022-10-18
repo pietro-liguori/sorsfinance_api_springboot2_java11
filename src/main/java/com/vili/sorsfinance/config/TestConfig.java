@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile;
 import com.vili.sorsfinance.api.domain.Address;
 import com.vili.sorsfinance.api.domain.BankAccount;
 import com.vili.sorsfinance.api.domain.Branch;
-import com.vili.sorsfinance.api.domain.Card;
 import com.vili.sorsfinance.api.domain.Category;
 import com.vili.sorsfinance.api.domain.City;
 import com.vili.sorsfinance.api.domain.Contact;
@@ -24,30 +23,40 @@ import com.vili.sorsfinance.api.domain.CreditCardStatement;
 import com.vili.sorsfinance.api.domain.CreditInstallment;
 import com.vili.sorsfinance.api.domain.CreditPayment;
 import com.vili.sorsfinance.api.domain.Email;
+import com.vili.sorsfinance.api.domain.LegalPerson;
+import com.vili.sorsfinance.api.domain.NaturalPerson;
 import com.vili.sorsfinance.api.domain.Payment;
 import com.vili.sorsfinance.api.domain.Person;
 import com.vili.sorsfinance.api.domain.Phone;
 import com.vili.sorsfinance.api.domain.Product;
+import com.vili.sorsfinance.api.domain.ProductItem;
 import com.vili.sorsfinance.api.domain.ServiceProvision;
+import com.vili.sorsfinance.api.domain.ServiceProvisionItem;
 import com.vili.sorsfinance.api.domain.State;
-import com.vili.sorsfinance.api.domain.TicketAccount;
 import com.vili.sorsfinance.api.domain.Transaction;
 import com.vili.sorsfinance.api.domain.TransactionItem;
+import com.vili.sorsfinance.api.domain.Voucher;
+import com.vili.sorsfinance.api.domain.VoucherAccount;
 import com.vili.sorsfinance.api.domain.Wallet;
 import com.vili.sorsfinance.api.domain.enums.AccountStatus;
 import com.vili.sorsfinance.api.domain.enums.AccountType;
-import com.vili.sorsfinance.api.domain.enums.AssetType;
+import com.vili.sorsfinance.api.domain.enums.AddressType;
+import com.vili.sorsfinance.api.domain.enums.CadastralStatus;
 import com.vili.sorsfinance.api.domain.enums.CardStatus;
 import com.vili.sorsfinance.api.domain.enums.CardType;
 import com.vili.sorsfinance.api.domain.enums.ContactType;
+import com.vili.sorsfinance.api.domain.enums.MeasurementType;
+import com.vili.sorsfinance.api.domain.enums.MeasurementUnit;
 import com.vili.sorsfinance.api.domain.enums.PaymentStatus;
 import com.vili.sorsfinance.api.domain.enums.PaymentType;
 import com.vili.sorsfinance.api.domain.enums.PeriodUnit;
 import com.vili.sorsfinance.api.domain.enums.PersonProfile;
 import com.vili.sorsfinance.api.domain.enums.PersonType;
 import com.vili.sorsfinance.api.domain.enums.PhoneType;
+import com.vili.sorsfinance.api.domain.enums.TransactionDirection;
 import com.vili.sorsfinance.api.domain.enums.TransactionType;
 import com.vili.sorsfinance.api.repositories.BusinessEntityRepository;
+import com.vili.util.enums.DateParse.Extract;
 
 @Configuration
 @Profile("test")
@@ -77,6 +86,8 @@ public class TestConfig implements CommandLineRunner {
 		
 		Country cnt1 = new Country(null, "Brasil", "BRA");
 		
+		cnt1.addAreaCode("55");
+		
 		State st1 = new State(null, "São Paulo", "SP", cnt1);
 		State st2 = new State(null, "Rio de Janeiro", "RJ", cnt1);
 		
@@ -92,36 +103,35 @@ public class TestConfig implements CommandLineRunner {
 		repository.saveAll(Arrays.asList(st1, st2));
 		repository.saveAll(Arrays.asList(cty1, cty2, cty3, cty4, cty5, cty6));
 		
-		Branch bch1 = new Branch(null, "Pessoa Física");
 		Branch bch2 = new Branch(null, "Varejo de móveis e eletrodomésticos");
 		Branch bch3 = new Branch(null, "Costureira");
 		Branch bch4 = new Branch(null, "Banco");
 		
-		repository.saveAll(Arrays.asList(bch1, bch2, bch3, bch4));
-				
-		Person p1 = new Person(null, "Pietro Magalhães Liguori", "36872371846", PersonType.NATURAL_PERSON, PersonProfile.HOLDER);
-		Person p2 = new Person(null, "Santander", null, PersonType.LEGAL_PERSON, PersonProfile.BANK);
-		Person p3 = new Person(null, "Casas Bahia", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
-		Person p4 = new Person(null, "Casa da costura", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
-		Person p5 = new Person(null, "Sodexo", null, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
+		repository.saveAll(Arrays.asList(bch2, bch3, bch4));
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		p1.setBranch(bch1);
-		p2.setBranch(bch4);
-		p3.setBranch(bch2);
-		p4.setBranch(bch3);
-		p5.setBranch(bch4);
+		Person p1 = new NaturalPerson(null, "Pietro Magalhães Liguori", null, "36872371846", sdf.parse("02/02/1988"), PersonType.NATURAL_PERSON, PersonProfile.HOLDER);
+		Person p2 = new LegalPerson(null, "Santander", null, "59575555000104", null, CadastralStatus.ACTIVE, PersonType.LEGAL_PERSON, PersonProfile.BANK);
+		Person p3 = new LegalPerson(null, "Casas Bahia", null, null, null, CadastralStatus.ACTIVE, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
+		Person p4 = new LegalPerson(null, "Casa da costura", null, null, null, CadastralStatus.ACTIVE, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
+		Person p5 = new LegalPerson(null, "Sodexo", null, null, null, CadastralStatus.ACTIVE, PersonType.LEGAL_PERSON, PersonProfile.STANDARD);
 
-		Wallet acc1 = new Wallet(null, "Carteira Pietro", p1, 0.0, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
-		BankAccount acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 0.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
-		TicketAccount acc3 = new TicketAccount(null, "Sodexo Pietro", p1, p5, 0.0, AccountType.TICKET_ACCOUNT, AccountStatus.ACTIVE);
+		((LegalPerson) p2).setBranch(bch4);
+		((LegalPerson) p3).setBranch(bch2);
+		((LegalPerson) p4).setBranch(bch3);
+		((LegalPerson) p5).setBranch(bch4);
 
-		Card cd1 = new Card(null, "Santander Universitário", acc2, "1536", null, CardType.MULTIPLE, CardStatus.UNBLOCKED);
-		CreditCard cd2 = new CreditCard(null, "Crédito Santander", acc2, "0714", null, CardType.CREDIT, CardStatus.UNBLOCKED, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH);
-		Card cd3 = new Card(null, "VR Sodexo", acc3, "4879", null, CardType.MEAL_TICKET, CardStatus.UNBLOCKED);
+		Wallet acc1 = new Wallet(null, "Carteira Pietro", p1, 50.0, 0.0, AccountType.WALLET, AccountStatus.ACTIVE);
+		BankAccount acc2 = new BankAccount(null, "Santander Pietro", p1, "01013389-4", "0216", p2, 10000.0, 1800.0, 0.08, PeriodUnit.MONTH, 10, PeriodUnit.DAY, 2800.0, AccountType.CHECKING_ACCOUNT, AccountStatus.ACTIVE);
+		VoucherAccount acc3 = new VoucherAccount(null, "Sodexo Pietro", "36872371846",  p1, p5, AccountType.VOUCHER_ACCOUNT, AccountStatus.ACTIVE);
+
+		CreditCard cd1 = new CreditCard(null, "Santander Universitário", acc2, "PIETRO M LIGUORI", "1536", null, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH, 1000.0, CardType.MULTIPLE, CardStatus.UNBLOCKED);
+		CreditCard cd2 = new CreditCard(null, "Crédito Santander", acc2, "PIETRO M LIGUORI", "0714", null, 13, 10, PeriodUnit.DAY, 0.14, PeriodUnit.MONTH, 1000.0, CardType.CREDIT, CardStatus.UNBLOCKED);
+		Voucher cd3 = new Voucher(null, "VR Sodexo", acc3, "4879", null, 850.0, CardType.MEAL_TICKET, CardStatus.UNBLOCKED);
 
 		acc2.addCard(cd1);
 		acc2.addCard(cd2);
-		acc3.addCard(cd3);
+		acc3.addVoucher(cd3);
 		
 		p1.addAccount(acc1);
 		p1.addAccount(acc2);
@@ -135,11 +145,11 @@ public class TestConfig implements CommandLineRunner {
 
 		repository.saveAll(Arrays.asList(ctc1));
 
-		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true);
+		Address adr1 = new Address(null, "Rua João Ferragut", "235", "Torre 7, apto 21", "Pinheirinho", "13289-476", cty3, true, AddressType.RESIDENTIAL);
 		Email em1 = new Email(null, "pietro_liguori@hotmail.com", true);
-		Phone ph1 = new Phone(null, "11996758494", PhoneType.MOBILE, true);
+		Phone ph1 = new Phone(null, "11996758494", cnt1, PhoneType.MOBILE, true);
 		
-		adr1.addContact(ctc1);
+		adr1.setContact(ctc1);
 		em1.setContact(ctc1);
 		ph1.setContact(ctc1);
 		
@@ -147,13 +157,13 @@ public class TestConfig implements CommandLineRunner {
 		repository.saveAll(Arrays.asList(em1));
 		repository.saveAll(Arrays.asList(ph1));
 
-		Product a1 = new Product(null, "Televisão", AssetType.PRODUCT, null, "Samsung");
-		ServiceProvision a2 = new ServiceProvision(null, "Conserto de calça jeans", AssetType.SERVICE_PROVISION, null);
-		Product a3 = new Product(null, "Liquidificador", AssetType.PRODUCT, null, "Philco");
-		Product a4 = new Product(null, "Queijo Brie", AssetType.PRODUCT, null, "Tirolez");
-		ServiceProvision a5 = new ServiceProvision(null, "Massagem modeladora", AssetType.SERVICE_PROVISION, null);
-		Product a6 = new Product(null, "Queijo Parmesão", AssetType.PRODUCT, null, "Tirolez");
-		Product a7 = new Product(null, "Peito de Frango", AssetType.PRODUCT, null, "Covabra");
+		Product a1 = new Product(null, "Televisão", "Samsung");
+		ServiceProvision a2 = new ServiceProvision(null, "Conserto de calça jeans", "Conserto de calça jeans");
+		Product a3 = new Product(null, "Liquidificador", "Philco");
+		Product a4 = new Product(null, "Queijo Brie", "Tirolez");
+		ServiceProvision a5 = new ServiceProvision(null, "Massagem modeladora", "Massagem modeladora");
+		Product a6 = new Product(null, "Queijo Parmesão", "Tirolez");
+		Product a7 = new Product(null, "Peito de Frango", "Covabra");
 
 		a1.addCategories(cat6);
 		a2.addCategories(cat7);
@@ -165,36 +175,36 @@ public class TestConfig implements CommandLineRunner {
 
 		repository.saveAll(Arrays.asList(a1, a2, a3, a4, a5, a6, a7));
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date dt1 = new Date(sdf.parse("12/02/2020").toInstant().toEpochMilli());
 		Date dt2 = new Date(sdf.parse("12/02/2022").toInstant().toEpochMilli());
 
-		Transaction t1 = new Transaction(null, p3, dt1, "Compra Casas Bahia", 1200.0, 0.0, TransactionType.DEFAULT);
-		Transaction t2 = new Transaction(null, p4, dt2, "Costureira", 90.0, 0.0, TransactionType.DEFAULT);
+		Transaction t1 = new Transaction(null, p3, dt1, "Compra Casas Bahia", 0.0, TransactionType.DEFAULT, TransactionDirection.OUTPUT);
+		Transaction t2 = new Transaction(null, p4, dt2, "Costureira", 0.0, TransactionType.DEFAULT, TransactionDirection.OUTPUT);
 		
 		t1.addCategories(cat6);
 		t2.addCategories(cat7);
 		repository.saveAll(Arrays.asList(t1, t2));
 
-		TransactionItem ti1 = new TransactionItem(null, t1, a1, 800.0, 1, 0.0);
-		TransactionItem ti2 = new TransactionItem(null, t1, a3, 200.0, 2, 0.0);
-		TransactionItem ti3 = new TransactionItem(null, t2, a2, 30.0, 3, 0.0);
+		TransactionItem ti1 = new ProductItem(null, t1, a1, 800.0, 1, 0.0, null, 1.0, MeasurementType.QUANTITY, MeasurementUnit.UNIT, null);
+		TransactionItem ti2 = new ProductItem(null, t1, a3, 200.0, 2, 0.0, null, 1.0, MeasurementType.QUANTITY, MeasurementUnit.UNIT, null);
+		TransactionItem ti3 = new ServiceProvisionItem(null, t2, a2, 30.0, 3, 0.0, null, null);
 
 		repository.saveAll(Arrays.asList(ti1, ti2, ti3));
 		
-		CreditPayment pay1 = new CreditPayment(null, "Pagamento no crédito 3x", PaymentType.CREDIT, 1200.0, PaymentStatus.PAID, acc2, p1, t1, cd1, 3);
+		CreditPayment pay1 = new CreditPayment(null, "Pagamento no crédito 3x", 1200.0, PaymentStatus.PAID, acc2, p1, t1, cd1, 3);
 		Payment pay2 = new Payment(null, "Pagamento em dinheiro", PaymentType.CASH, 50.0, PaymentStatus.PAID, acc1, p1, t2, null);
 		Payment pay3 = new Payment(null, "Pagamento no débito", PaymentType.DEBIT, 40.0, PaymentStatus.PAID, acc2, p1, t2, cd1);
 		repository.saveAll(Arrays.asList(pay1, pay2, pay3));
 		
 		List<Double> iv1 = pay1.getInstallmentValues(null);
-		Date clsdt = new Date(sdf.parse("12/02/2022").toInstant().toEpochMilli());
-		Date duedt = new Date(sdf.parse("22/02/2022").toInstant().toEpochMilli());
+		Date clsdt = new Date(sdf.parse("13/08/2022").toInstant().toEpochMilli());
+		Date duedt = new Date(sdf.parse("23/08/2022").toInstant().toEpochMilli());
+		String description = Extract.MONTH_NAME.from(clsdt).substring(0, 1).toUpperCase() + Extract.MONTH_NAME.from(clsdt).substring(1, Extract.MONTH_NAME.from(clsdt).length()) + " " + Extract.YEAR.from(clsdt);
 		Calendar cal = Calendar.getInstance();
 
 		for (int i = 1; i <= pay1.getInstallments(); i++) {
-			CreditCardStatement st = new CreditCardStatement(null, cd2, "Fatura " + i, clsdt, duedt, PaymentStatus.NOT_PAID);
-			CreditInstallment pi = new CreditInstallment(null, pay1, st, iv1.get(i - 1), i, PaymentStatus.NOT_PAID);
+			CreditCardStatement st = new CreditCardStatement(null, acc2, description, clsdt, duedt);
+			CreditInstallment pi = new CreditInstallment(null, pay1, st, iv1.get(i - 1), i);
 			repository.save(st);
 			repository.save(pi);
 			cal.setTime(clsdt);
@@ -203,6 +213,7 @@ public class TestConfig implements CommandLineRunner {
 			cal.setTime(duedt);
 			cal.add(Calendar.MONTH, 1);
 			duedt = new Date(cal.getTime().toInstant().toEpochMilli());
+			description = Extract.MONTH_NAME.from(clsdt).substring(0, 1).toUpperCase() + Extract.MONTH_NAME.from(clsdt).substring(1, Extract.MONTH_NAME.from(clsdt).length()) + " " + Extract.YEAR.from(clsdt);
 		}
 	}
 }

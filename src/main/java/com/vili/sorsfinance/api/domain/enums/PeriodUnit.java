@@ -1,6 +1,6 @@
 package com.vili.sorsfinance.api.domain.enums;
 
-import com.vili.sorsfinance.framework.exceptions.EnumValueNotFoundException;
+import com.vili.sorsfinance.framework.exceptions.custom.EnumValueNotFoundException;
 
 public enum PeriodUnit {
 
@@ -16,16 +16,9 @@ public enum PeriodUnit {
 	private Integer code;
 	private String label;
 	
-	private PeriodUnit(Integer code, String label) {
+	PeriodUnit(Integer code, String label) {
 		this.code = code;
 		this.label = label;
-	}
-
-	private PeriodUnit(Integer code) {
-		this.code = code;
-	}
-
-	private PeriodUnit() {
 	}
 
 	public Integer getCode() {
